@@ -1,0 +1,103 @@
+.MyCharacters .mainContent {
+    max-width: 1400px;
+    width: 100%;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 80px;
+}
+
+.MyCharacters .mainContent .userInfo {
+    display: flex;
+    margin-top: 80px;
+    align-items: center;
+}
+
+.MyCharacters .mainContent .userInfo>img {
+    width: 103px;
+    height: 103px;
+}
+
+.MyCharacters .mainContent .userInfo .infoPanel {
+    margin-left: 20px;
+}
+
+.MyCharacters .mainContent .userInfo .infoPanel .userName {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 43px;
+    color: #1B1B1B;
+}
+
+.MyCharacters .mainContent .userInfo .infoPanel .buttonGroup {
+    margin-top: 20px;
+    display: flex;
+}
+
+.MyCharacters .mainContent .userInfo .infoPanel .buttonGroup>div {
+    display: flex;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    color: #FFFFFF;
+    background: linear-gradient(97.35deg, #FA5FFA -0.76%, #E539E5 107.58%);
+    box-shadow: 0px 4px 20px rgba(233, 64, 233, 0.35);
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.MyCharacters .mainContent .userInfo .infoPanel .buttonGroup>div img {
+    margin-left: 8px;
+}
+
+.MyCharacters .mainContent .userInfo .infoPanel .buttonGroup .copyAddressBtn {
+    width: 161px;
+    height: 40px;
+}
+
+.MyCharacters .mainContent .userInfo .infoPanel .buttonGroup .shareBtn {
+    margin-left: 10px;
+    width: 102px;
+    height: 40px;
+}
+
+.MyCharacters .mainContent .subtitle {
+    margin-top: 20px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #5E5E5E;
+}
+
+.MyCharacters .mainContent .react-tabs {
+    margin-left: 123px;
+    margin-top: 60px;
+}
+
+.MyCharacters .mainContent .characterList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.MyCharacters .mainContent .characterList .NFTCharacter {
+    width: 288px;
+    height: 383px;
+}
+
+@media (max-width: 640px) {
+    .MyCharacters .mainContent .react-tabs {
+        margin-left: 0px;
+    }
+
+    .MyCharacters .mainContent .characterList .NFTCharacter {
+        width: 347px;
+        height: 383px;
+    }
+}

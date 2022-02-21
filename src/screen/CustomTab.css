@@ -1,0 +1,29 @@
+.react-tabs {
+    margin-top: 30px;
+}
+
+.react-tabs ul {
+    display: flex;
+    padding-inline-start: 0px;
+    border-bottom: 2px solid #E1E4EB;
+    width: 100%;
+}
+
+.react-tabs ul>li {
+    cursor: pointer;
+    list-style: none;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    padding-bottom: 10px;
+}
+
+.react-tabs ul>li:not(:first-child) {
+    margin-left: 60px;
+}
+
+.react-tabs ul .react-tabs__tab--selected {
+    color: #E539E5;
+    border-bottom: 2px solid #E539E5;
+}

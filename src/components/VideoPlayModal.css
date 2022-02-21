@@ -1,0 +1,23 @@
+.videoPlayModal {
+    padding: 0px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.videoPlayModal .modal-content {
+    border-radius: 10px;
+}
+
+.videoPlayModal video {
+    width: 600px;
+    border-radius: 10px;
+}
+
+.videoPlayModal .modal-dialog {
+    width: 100%;
+}
+
+.videoPlayModal video {
+    width: 100%;
+}

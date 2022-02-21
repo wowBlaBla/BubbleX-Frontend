@@ -1,0 +1,111 @@
+.makeCharacterModal {
+    display: flex;
+    align-items: center;
+}
+
+.makeCharacterModal .modal-content {
+    padding: 30px;
+    position: relative;
+    box-shadow: 0px 4px 20px rgba(71, 84, 99, 0.15);
+    border-radius: 25px;
+}
+
+.makeCharacterModal .modal-content>img:last-child {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.makeCharacterModal .title {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 43px;
+    color: #1B1B1B;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #E1E4EB;
+    ;
+}
+
+.makeCharacterModal .convert3D {
+    margin-top: 47px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.makeCharacterModal .convert3D .selectCharacter, .makeCharacterModal .convert3D .convertedCharacter {
+    width: 288px;
+    height: 383px;
+    border: 3px dashed #F658F6;
+    box-sizing: border-box;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.makeCharacterModal .convert3D .selectCharacter img {
+    width: 166px;
+    height: 50px;
+}
+
+.makeCharacterModal .convert3D .selectCharacter {
+    margin-right: 9px;
+}
+
+.makeCharacterModal .convert3D .convertedCharacter {
+    margin-left: 9px;
+}
+
+.makeCharacterModal .convert3D .convertedCharacter .text {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    color: #1B1B1B;
+}
+
+.makeCharacterModal .content1 {
+    margin-top: 30px;
+    display: flex;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #5E5E5E;
+    justify-content: space-between;
+}
+
+.makeCharacterModal .bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px; 
+}
+
+.makeCharacterModal .bottom .acceptBtn {
+    width: 205px;
+    height: 70px;
+    background: linear-gradient(97.35deg, #FA5FFA -0.76%, #E539E5 107.58%);
+    box-shadow: 0px 4px 20px rgba(233, 64, 233, 0.35);
+    border-radius: 15px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: center;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .makeCharacterModal .title {
+
+    }
+}

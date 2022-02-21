@@ -1,0 +1,230 @@
+.CustomToolbar {
+    margin-top: 20px;
+    display: flex;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #A4A4A4;
+    justify-content: space-between;
+}
+
+.CustomToolbar .priceRange {
+    width: 187px;
+    height: 70px;
+    background: #FFFFFF;
+    border: 1px solid #E1E4EB;
+    box-sizing: border-box;
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.CustomToolbar .priceRange .priceRangePanel {
+    position: absolute;
+    top: 80px;
+    padding: 15px;
+    width: 298px;
+    height: 140px;
+    background: #FFFFFF;
+    border: 1px solid #E1E4EB;
+    box-sizing: border-box;
+    border-radius: 15px;
+    left: 0px;
+    background: white;
+}
+
+.CustomToolbar .priceRange .priceRangePanel .valueGroup {
+    display: flex;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    color: #1B1B1B;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.CustomToolbar .priceRange .priceRangePanel .valueGroup .valueSelector {
+    width: 115px;
+    height: 42px;
+    padding: 11px;
+    display: flex;
+    border: 1px solid #E1E4EB;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.CustomToolbar .priceRange .priceRangePanel .valueGroup .valueSelector input {
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #5E5E5E;
+}
+
+.CustomToolbar .priceRange .priceRangePanel .bottom {
+    display: flex;
+    margin-top: 23px;
+    justify-content: space-between;
+}
+
+.CustomToolbar .priceRange .priceRangePanel .bottom>div {
+    border-radius: 12px;
+    width: 125px;
+    height: 49px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.CustomToolbar .priceRange .priceRangePanel .bottom .applyBtn {
+    background: linear-gradient(97.35deg, #FA5FFA -0.76%, #E539E5 107.58%);
+    color: white;
+}
+
+.CustomToolbar .priceRange .priceRangePanel .bottom .cancelBtn {
+    box-shadow: 0px 20px 19px -21px rgba(83, 159, 249, 0.4);
+    border: 1px solid #E539E5;
+    color: #E539E5;
+}
+
+.CustomToolbar .filter {
+    display: flex;
+}
+
+.CustomToolbar .filter .search {
+    display: flex;
+    padding: 5px 15px 5px 15px;
+    width: 231px;
+    height: 70px;
+    background: #FFFFFF;
+    border: 1px solid #E1E4EB;
+    box-sizing: border-box;
+    border-radius: 15px;
+    margin-right: 35px;
+    align-items: center;
+}
+
+.CustomToolbar .filter .search img {
+    margin-right: 10px;
+}
+
+.CustomToolbar .filter .search input {
+    width: 100%;
+    outline: none;
+    border: none;
+}
+
+.CustomToolbar .filter .sort {
+    padding-left: 30px;
+    position: relative;
+    padding-right: 30px;
+    min-width: 210px;
+    height: 70px;
+    border: 1px solid #E1E4EB;
+    box-sizing: border-box;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.CustomToolbar .filter .sort>div:first-child {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.CustomToolbar .filter .sort>div:first-child img:first-child {
+    margin-right: 15px;
+}
+
+.CustomToolbar .filter .sort>div:first-child img:last-child {
+    /* position: absolute; */
+    /* right: 30px; */
+    margin-left: 30px;
+}
+
+.CustomToolbar .filter .sort .sortPanel {
+    position: absolute;
+    top: 80px;
+    padding: 15px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #1B1B1B;
+    width: 210px;
+    height: 126px;
+    background: #FFFFFF;
+    border: 1px solid #E1E4EB;
+    box-sizing: border-box;
+    border-radius: 15px;
+    right: 0px;
+}
+
+.CustomToolbar .filter .sort .sortPanel .sortSelector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.CustomToolbar .filter .sort .sortPanel .sortSelector:not(:first-child) {
+    margin-top: 15px;
+}
+
+@media (max-width: 640px) {
+    .CustomToolbar {
+        flex-direction: column;
+    }
+
+    .CustomToolbar .filter {
+        flex-direction: column;
+        margin-top: 10px;
+    }
+
+    .CustomToolbar .filter .search {
+        margin-right: 0px;
+        width: 100%;
+        margin-bottom: 10px;
+        padding-left: 30px;
+    }
+
+    .CustomToolbar .priceRange {
+        width: 100%;
+        padding-left: 30px;
+        justify-content: flex-start;
+    }
+
+    .CustomToolbar .filter .sort {
+        width: 100%;
+    }
+
+    .CustomToolbar .priceRange .priceRangePanel {
+        z-index: 1;
+        width: 100%;
+    }
+
+    .CustomToolbar .filter .sort .sortPanel {
+        width: 100%;
+    }
+
+    .CustomToolbar .filter .sort .sortPanel .sortSelector {
+        width: 70%;
+    }
+
+    .Marketplace .mainContent .title {
+        text-align: center;
+    }
+
+    .react-tabs ul>li {
+        width: 50%;
+        text-align: center;
+    }
+}
