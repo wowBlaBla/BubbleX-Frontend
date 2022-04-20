@@ -4,11 +4,88 @@ import { Link } from 'react-router-dom';
 import {setIsMate} from "../actions/projectSetting";
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+
+import Web3Lib from 'web3';
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { Alert, Modal } from 'react-bootstrap';
+import axios from 'axios';
+
 function Header(props) {
     const [showMobileSidebar, setShowMobileSidebar] = useState(false);
     const [showHomeHover, setShowHomeHover] = useState(false);
     const [showMarketplaceHover, setShowMarketplaceHover] = useState(false);
-    
+
+    const [isOpen, setOpenModal] = useState(false);
+    const [view, setView] = useState(false);
+    const [walletAddress, setWalletAddress] = useState('');
+    const [loginInfo, setLoginInfo] = useState({
+        email: '',
+        password: ''
+    });
+    const [errMsg, setErrorMsg] = useState('');
+
+
+    const walletConnect = async () => {
+        try {
+            const providerOptions = {
+                walletconnect: {
+                  package: WalletConnectProvider,
+                  options: {
+                    infuraId: "b9719f5304ad4806b0e693943f308652"
+                  }
+                }
+              }
+            
+              const web3Modal = new Web3Modal({
+                network: "mainnet",
+                cacheProvider: true,
+                providerOptions
+              })
+          
+              const provider = await web3Modal.connect();
+              const web3 = new Web3Lib(provider);
+              const accounts = await web3.eth.getAccounts();
+              setWalletAddress(accounts[0]);
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    const loginSlamWallet = async() => {
+        try {
+
+            if (!loginInfo.email || !loginInfo.password) {
+                return;
+            }
+
+            let _token = {};
+            await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/signin`, loginInfo).then(res => {
+                const { token, status, message } = res.data;
+                if (status == 'error') setErrorMsg(message);
+                else setErrorMsg('');
+                if (status == 'success') _token = { token };
+            }).catch(error1 => {
+
+            });
+
+            if (_token) {
+                await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
+                    const { address: _wallet } = res.data;
+                    setWalletAddress(_wallet);
+                    setLoginInfo({
+                        email: '', password: ''
+                    });
+                    setOpenModal(false);
+                }).catch(err1 => {
+                    console.log(err1);
+                })
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     return (
         <div className={"header " + (showMobileSidebar ? "mobileShow" : "")}>
             <div className="header_logo">
@@ -72,8 +149,14 @@ function Header(props) {
                         </div>
                     </div>
                     <div className="header_buttonGroup">
-                        <div className="connectWallet">Connect wallet</div>
-                        <div className="connectSlamWallet">Connect SlamWallet</div>
+                        {
+                            !walletAddress ?
+                            <>
+                                <div className="connectWallet" onClick={walletConnect}>Connect wallet</div>
+                                <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>Connect SlamWallet</div>
+                            </>
+                            : <div className="connectWallet">{walletAddress.substr(0, 6) + '...' + walletAddress.substr(-4)}</div>
+                        }
                     </div>
                 </div>
             </div>
@@ -81,6 +164,46 @@ function Header(props) {
                 <img src="/image/menu.png" alt="" onClick={() => setShowMobileSidebar(true)} />
                 <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
             </div>
+            <Modal show={isOpen} className="SlamWallet">
+                <div className="Content">
+                    <div className="subLoginTitle">Login</div>
+                    {
+                        errMsg && (
+                            <Alert variant="danger">
+                                <p>{errMsg}</p>
+                            </Alert>
+                        )
+                    }
+                    <div className="subDes">Log in with your data that you entered during your registration.</div>
+                    <div className="inputGroup">
+                        <div className="label">E-mail</div>
+                        <div className="inputText">
+                            <input
+                                type="email"
+                                placeholder="Enter your email "
+                                value={loginInfo.email}
+                                onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className="inputGroup">
+                        <div className="label">Password</div>
+                        <div className="inputText">
+                            <input
+                                type={view ? "text" : "password"}
+                                placeholder="At least 8 characters"
+                                value={loginInfo.password}
+                                onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
+                            />
+                            <img src="/image/eye.png" alt="" onClick={() => setView(!view)} />
+                        </div>
+                    </div>
+                    <div
+                        className="loginBtn"
+                        onClick={loginSlamWallet}
+                    >Log in</div>
+                </div>
+            </Modal>
         </div>
     )
 }
