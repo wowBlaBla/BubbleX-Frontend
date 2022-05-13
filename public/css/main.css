@@ -208,6 +208,19 @@ body {
     cursor: pointer;
 }
 
+.header .header_buttonGroup .disconnectWallet {
+    width: 197px;
+    height: 49px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: #f52144;
+    color: #FFFFFF;
+    margin-left: 40px;
+}
+
 .header .header_buttonGroup .connectSlamWallet {
     width: 240px;
     height: 49px;

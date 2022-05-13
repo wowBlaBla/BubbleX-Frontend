@@ -494,7 +494,7 @@ export default function Home() {
                                 </div>
                                 <div className="reserveBtn">Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
-                                    <div className="bubbleValue">237/1000</div>
+                                    <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
                                 </div>
                             </div>
@@ -522,7 +522,7 @@ export default function Home() {
                                 </div>
                                 <div className="reserveBtn">Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
-                                    <div className="bubbleValue">237/1000</div>
+                                    <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
                                 </div>
                             </div>
@@ -550,7 +550,7 @@ export default function Home() {
                                 </div>
                                 <div className="reserveBtn">Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
-                                    <div className="bubbleValue">237/1000</div>
+                                    <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
                                 </div>
                             </div>

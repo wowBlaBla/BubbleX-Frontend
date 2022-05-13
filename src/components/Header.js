@@ -25,7 +25,7 @@ function Header(props) {
     });
     const [errMsg, setErrorMsg] = useState('');
 
-
+    const handleClose = () => setOpenModal(false);
     const walletConnect = async () => {
         try {
             const providerOptions = {
@@ -50,6 +50,10 @@ function Header(props) {
         } catch(err) {
             console.log(err);
         }
+    }
+
+    const disconnectWallet = async () => {
+        setWalletAddress('');
     }
 
     const loginSlamWallet = async() => {
@@ -155,7 +159,11 @@ function Header(props) {
                                 <div className="connectWallet" onClick={walletConnect}>Connect wallet</div>
                                 <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>Connect SlamWallet</div>
                             </>
-                            : <div className="connectWallet">{walletAddress.substr(0, 6) + '...' + walletAddress.substr(-4)}</div>
+                            : 
+                            <>
+                                <div className="connectWallet">{walletAddress.substr(0, 6) + '...' + walletAddress.substr(-4)}</div>
+                                <div className="disconnectWallet" onClick={disconnectWallet}>Disconnect Wallet</div>
+                            </>
                         }
                     </div>
                 </div>
@@ -164,7 +172,7 @@ function Header(props) {
                 <img src="/image/menu.png" alt="" onClick={() => setShowMobileSidebar(true)} />
                 <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
             </div>
-            <Modal show={isOpen} className="SlamWallet">
+            <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
                 <div className="Content">
                     <div className="subLoginTitle">Login</div>
                     {
