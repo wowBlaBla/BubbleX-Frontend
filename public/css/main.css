@@ -2395,7 +2395,7 @@ body {
         line-height: 15px;
     }
 
-    .header .header_buttonGroup .connectWallet {
+    .header .header_buttonGroup .connectWallet, .header .header_buttonGroup .disconnectWallet {
         width: 140px;
         height: 35px;
         border-radius: 8px;
@@ -2776,6 +2776,15 @@ body {
         border-radius: 15px;
         margin-top: 30px;
 
+    }
+
+    .header .header_buttonGroup .disconnectWallet {
+        width: 100%;
+        height: 49px;
+        margin-top: 15px;
+        margin-left:0px;
+        box-sizing: border-box;
+        border-radius: 15px;
     }
 
     .header .header_buttonGroup .connectSlamWallet {
