@@ -1,17 +1,41 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import {setIsMate} from "../actions/projectSetting";
-import { connect } from 'react-redux'
+import { setIsMate } from "../actions/projectSetting";
+import { useDispatch, connect, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import Web3Lib from 'web3';
 import Web3Modal from "web3modal";
+import { providers } from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { Alert, Modal } from 'react-bootstrap';
 import axios from 'axios';
 
+import { User_Address, Injected_Wallet } from '../actions/types';
+
+const providerOptions = {
+    walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+            infuraId: "b9719f5304ad4806b0e693943f308652"
+        }
+    }
+}
+
+const web3Modal = new Web3Modal({
+    network: "mainnet",
+    cacheProvider: true,
+    providerOptions
+})
+
 function Header(props) {
+    const state = useSelector(store => store.wallet);
+
+    const { provider, web3Provider, address, chainId } = state;
+    const dispatch = useDispatch();
+
+    const userAddress = useSelector(store => store.projectSetting.userAddress);
+
     const [showMobileSidebar, setShowMobileSidebar] = useState(false);
     const [showHomeHover, setShowHomeHover] = useState(false);
     const [showMarketplaceHover, setShowMarketplaceHover] = useState(false);
@@ -24,39 +48,81 @@ function Header(props) {
         password: ''
     });
     const [errMsg, setErrorMsg] = useState('');
+    const [loginSlamFlg, setLoginSlamFlg] = useState(0);
 
     const handleClose = () => setOpenModal(false);
-    const walletConnect = async () => {
+
+
+    //const { provider, web3, address, chainId } = useState();
+
+    useEffect(() => {
+        const isConnected = localStorage.getItem("walletAddress") ? true : false;
+
+        if (isConnected) {
+            walletConnect();
+        }
+    }, [])
+
+    const walletConnect = useCallback(async () => {
         try {
-            const providerOptions = {
-                walletconnect: {
-                  package: WalletConnectProvider,
-                  options: {
-                    infuraId: "b9719f5304ad4806b0e693943f308652"
-                  }
-                }
-              }
+            console.log("First")
+            const provider = await web3Modal.connect();
+            //web3 = new Web3Lib(provider);
+            console.log("Second")
+            const web3Provider = new providers.Web3Provider(provider);
             
-              const web3Modal = new Web3Modal({
-                network: "mainnet",
-                cacheProvider: true,
-                providerOptions
-              })
-          
-              const provider = await web3Modal.connect();
-              const web3 = new Web3Lib(provider);
-              const accounts = await web3.eth.getAccounts();
-              setWalletAddress(accounts[0]);
-        } catch(err) {
+            console.log("Third")
+            const network = await web3Provider.getNetwork();
+            //const accounts = await web3.eth.getAccounts();
+
+            const signer = web3Provider.getSigner();
+            const address = await signer.getAddress();
+            setWalletAddress(address);
+            // setWalletAddress(accounts[0]);
+
+
+            dispatch({ type: 'User_Address', payload: address })
+
+            localStorage.setItem('walletAddress', address);
+            dispatch({ type: Injected_Wallet, payload: true });
+
+            dispatch({
+                type: "SET_WEB3_PROVIDER",
+                provider: provider,
+                web3Provider: web3Provider,
+                address: address,
+                chainId: network.chainId,
+            });
+
+        } catch (err) {
             console.log(err);
         }
-    }
+    }, [web3Provider]);
 
-    const disconnectWallet = async () => {
-        setWalletAddress('');
-    }
+    const disconnectWallet = useCallback(
+        async function () {
 
-    const loginSlamWallet = async() => {
+            // if (web3 && web3.currentProvider && web3.currentProvider.close) {
+            //     await web3.currentProvider.close();
+            // }
+            await web3Modal.clearCachedProvider();
+            if (provider?.disconnect && typeof provider.disconnect === "function") {
+                alert()
+                await provider.disconnect();
+                //history.push('/');
+                setWalletAddress('');
+            }
+            dispatch({
+                type: "RESET_WEB3_PROVIDER",
+            });
+            localStorage.setItem('walletAddress', null);
+
+
+        },
+        [provider]
+    );
+
+    const loginSlamWallet = async () => {
         try {
 
             if (!loginInfo.email || !loginInfo.password) {
@@ -81,14 +147,58 @@ function Header(props) {
                         email: '', password: ''
                     });
                     setOpenModal(false);
+                    setLoginSlamFlg(1);
                 }).catch(err1 => {
                     console.log(err1);
                 })
             }
-        } catch(err) {
+        } catch (err) {
             console.log(err);
         }
     }
+
+    useEffect(() => {
+        if (provider?.on) {
+
+            const handleAccountsChanged = (accounts) => {
+                // eslint-disable-next-line no-console
+                console.log("accountsChanged", accounts);
+                dispatch({
+                    type: "SET_ADDRESS",
+                    address: accounts[0],
+                });
+            };
+
+            const handleChainChanged = (chain) => {
+                // eslint-disable-next-line no-console
+                // console.log("accountsChanged--->", chain);
+                dispatch({
+                    type: "SET_CHAIN_ID",
+                    chainId: chain,
+                });
+            };
+
+            const handleDisconnect = (error) => {
+                // eslint-disable-next-line no-console
+                //disconnect();
+
+            };
+
+            provider.on("accountsChanged", handleAccountsChanged);
+            provider.on("chainChanged", handleChainChanged);
+            provider.on("disconnect", handleDisconnect);
+
+            // Subscription Cleanup
+            return () => {
+                if (provider.removeListener) {
+                    provider.removeListener("accountsChanged", handleAccountsChanged);
+                    provider.removeListener("chainChanged", handleChainChanged);
+                    //provider.removeListener("disconnect",);
+                }
+            };
+        }
+
+    }, [provider]);
 
     return (
         <div className={"header " + (showMobileSidebar ? "mobileShow" : "")}>
@@ -116,6 +226,7 @@ function Header(props) {
                                         <a href="/#metaverseDescription">Metaverse description</a>
                                         <a href="/#bubbleXMatch">BubbleX match mechanics</a>
                                         <a href="/#bubbleCoinMining">Bubblecoin mining mechanics</a>
+                                        <Link to="/ReservedBubbleX">Reserved bubbleX to you</Link>
                                         <div className="uparrow"></div>
                                     </div>
                                 </div> : <></>}
@@ -125,10 +236,11 @@ function Header(props) {
                                 <a href="/#metaverseDescription1" onClick={() => setShowMobileSidebar(false)}>Metaverse description</a>
                                 <a href="/#bubbleXMatch1" onClick={() => setShowMobileSidebar(false)}>BubbleX match mechanics</a>
                                 <a href="/#bubbleCoinMining1" onClick={() => setShowMobileSidebar(false)}>Bubblecoin mining mechanics</a>
+                                <Link to="/ReservedBubbleX">Reserved bubbleX to you</Link>
                             </div>
                         </div>
                         <div className="menuGroup">
-                            <div className="homeMenu" onMouseEnter={() => setShowMarketplaceHover(true)} onMouseLeave = {() => setShowMarketplaceHover(false)}>
+                            <div className="homeMenu" onMouseEnter={() => setShowMarketplaceHover(true)} onMouseLeave={() => setShowMarketplaceHover(false)}>
                                 <Link to="/Marketplace" className={props.selected == "Marketplace" ? "selected" : ""}
                                 >Marketplace</Link>
                                 <div data-toggle="collapse" href="#marketplacePanel" role="button" area-expanded="true" area-controls="marketplacePanel" className="collapsed"></div>
@@ -154,16 +266,89 @@ function Header(props) {
                     </div>
                     <div className="header_buttonGroup">
                         {
-                            !walletAddress ?
-                            <>
-                                <div className="connectWallet" onClick={walletConnect}>Connect wallet</div>
-                                <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>Connect SlamWallet</div>
-                            </>
-                            : 
-                            <>
-                                <div className="connectWallet">{walletAddress.substr(0, 6) + '...' + walletAddress.substr(-4)}</div>
-                                <div className="disconnectWallet" onClick={disconnectWallet}>Disconnect Wallet</div>
-                            </>
+                            !web3Provider ?
+                                <>
+                                    <div className="connectWallet" onClick={walletConnect}>Connect wallet</div>
+                                    <div className="connectSlamWalletContent">
+                                        <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>Connect SlamWallet</div>
+                                        {isOpen ?
+                                            <div className="LoginModal">
+                                                <img src="/image/close1.png" className='close' onClick={() => setOpenModal(false)} />
+                                                {loginSlamFlg == 0 ?
+                                                    <div>
+                                                        <img src="/image/slam.svg" />
+                                                        <div className="subLoginTitle">Welcome back!</div>
+                                                        {
+                                                            errMsg && (
+                                                                <Alert variant="danger">
+                                                                    <p>{errMsg}</p>
+                                                                </Alert>
+                                                            )
+                                                        }
+                                                        {/* <div className="subDes">Log in with your data that you entered during your registration.</div> */}
+                                                        <input
+                                                            type="email"
+                                                            placeholder="Enter your email "
+                                                            value={loginInfo.email}
+                                                            onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
+                                                            className="loginEmail"
+                                                        />
+                                                        {/* <div className="inputText">
+                                                    
+                                                </div> */}
+                                                        {/* <div className="inputGroup">
+                                                    <div className="label">E-mail</div>
+                                                    
+                                                </div> */}
+                                                        <input
+                                                            type={view ? "text" : "password"}
+                                                            placeholder="At least 8 characters"
+                                                            value={loginInfo.password}
+                                                            onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
+                                                            className="loginPassword"
+                                                        />
+                                                        {/* <div className="inputGroup">
+                                                    <div className="label">Password</div>
+                                                    <div className="inputText">
+                                                        
+                                                        <img src="/image/eye.png" alt="" onClick={() => setView(!view)} />
+                                                    </div>
+                                                </div> */}
+                                                        <div
+                                                            className="loginBtn"
+                                                            // onClick={loginSlamWallet}
+                                                            onClick={() => { setLoginSlamFlg(1) }}
+                                                        >Connect</div>
+                                                        <div className='loginfooter'>Don’t have an acсount yet? <div>Register</div></div>
+                                                    </div>
+                                                    :
+                                                    (loginSlamFlg == 1
+                                                        ?
+                                                        <div>
+                                                            <div className='username'>Alex</div>
+                                                            <div className='address'>0x...a37V<img src="/image/copy.svg" /></div>
+                                                            <img className='slamIcon' src="/image/slam.svg" />
+                                                            <div className='slamAmount'>13.123 $SLM</div>
+                                                            <div className='money'>$15.23 USD</div>
+                                                            <div className='visitBtn'>Visit SlamWallet</div>
+                                                            <div className='disconnectBtn' onClick={() => { setLoginSlamFlg(0) }}>Disconnect</div>
+                                                        </div>
+                                                        :
+                                                        <div></div>
+                                                    )
+                                                }
+                                            </div>
+                                            :
+                                            <></>
+                                        }
+                                    </div>
+
+                                </>
+                                :
+                                <>
+                                    <div className="connectWallet">{address.substr(0, 6) + '...' + address.substr(-4)}</div>
+                                    <div className="disconnectWallet" onClick={disconnectWallet}>Disconnect Wallet</div>
+                                </>
                         }
                     </div>
                 </div>
@@ -172,46 +357,9 @@ function Header(props) {
                 <img src="/image/menu.png" alt="" onClick={() => setShowMobileSidebar(true)} />
                 <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
             </div>
-            <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
-                <div className="Content">
-                    <div className="subLoginTitle">Login</div>
-                    {
-                        errMsg && (
-                            <Alert variant="danger">
-                                <p>{errMsg}</p>
-                            </Alert>
-                        )
-                    }
-                    <div className="subDes">Log in with your data that you entered during your registration.</div>
-                    <div className="inputGroup">
-                        <div className="label">E-mail</div>
-                        <div className="inputText">
-                            <input
-                                type="email"
-                                placeholder="Enter your email "
-                                value={loginInfo.email}
-                                onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
-                            />
-                        </div>
-                    </div>
-                    <div className="inputGroup">
-                        <div className="label">Password</div>
-                        <div className="inputText">
-                            <input
-                                type={view ? "text" : "password"}
-                                placeholder="At least 8 characters"
-                                value={loginInfo.password}
-                                onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
-                            />
-                            <img src="/image/eye.png" alt="" onClick={() => setView(!view)} />
-                        </div>
-                    </div>
-                    <div
-                        className="loginBtn"
-                        onClick={loginSlamWallet}
-                    >Log in</div>
-                </div>
-            </Modal>
+            {/* <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
+
+            </Modal> */}
         </div>
     )
 }

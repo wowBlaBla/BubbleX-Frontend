@@ -5,6 +5,12 @@ import Header from "../components/Header";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import VideoPlayModal from "../components/VideoPlayModal";
+import Web3 from "web3";
+
+import { connect, useSelector, useDispatch } from 'react-redux'
+//import { useWeb3Contracts } from "../web3/contracts";
+import BubblexABI from '../contract/BubbleX.json';
+
 
 export default function Home() {
     const [mintTokenCount, setMintTokenCount] = useState(100000);
@@ -18,6 +24,13 @@ export default function Home() {
     const [showFaqMore, setShowFaqMore] = useState(false);
     const videoRef = useRef(null);
     const [scrollY, setScrollY] = useState(window.scrollY);
+
+    //const userAddress = useSelector(store => store.projectSetting.userAddress);
+    const userAddress = useSelector(store => store.wallet.address);
+    const chainID = useSelector(store => store.wallet.chainId);
+    console.log("USer Address => " + userAddress)
+    console.log("ChainID => " + chainID)
+
     useEffect(() => {
         setScrollY(window.scrollY);
     }, []);
@@ -54,6 +67,213 @@ export default function Home() {
         else
             setSliderBackground({ background: "linear-gradient(to right, #FF79FF " + (parseFloat(event.target.value) - parseFloat(event.target.min)) / (parseFloat(event.target.max) - parseFloat(event.target.min)) * 100 + "%, #EEEEEE " + (parseFloat(event.target.value) - parseFloat(event.target.min)) / (parseFloat(event.target.max) - parseFloat(event.target.min)) * 100 + "%)" })
     }
+
+    const onSetRandomReverse = async (iCount) => {
+        if (iCount == 0) return;
+
+        // Check the Coin Network
+        if (chainID != 4) {
+            // alert("Please choose the Ethereum Mainnet");
+            alert("Please choose the Rinkyby Test Network on your Metamask");
+            return;
+        }
+
+        try {
+            // Get network provider and web3 instance.
+            const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
+            // Check the ETH balance on wallet
+            const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
+
+            if (eth_Balance < 0.1) {
+                alert("You should add min over 0.1 ETH to your wallet.");
+                return;
+            }
+
+            // Request account access if needed
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+
+            // Get an instance of the contract sop we can call our contract functions
+            const contract = new web3.eth.Contract(
+                BubblexABI,
+                process.env.REACT_APP_BUBBLEXRANDOM_CONTRACT_ADDRESS
+            );
+            console.log("Instance => ", userAddress)
+
+            let totalTokenCount = await contract.methods.balanceOf(userAddress)
+                .call();
+
+            console.log("********** Random ********** \n ", totalTokenCount)
+
+            if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
+                alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
+                return;
+            }
+            // let gas;
+
+            // try {
+            //     // // Estimate the gas required for the transaction
+            //     gas = await contract.methods.mint(userAddress).estimateGas({from: userAddress});
+            // }catch (e) {
+            //     console.log(e)
+            // }
+
+            // const gasPrice = await web3.eth.getGasPrice();
+            // const data = contract.methods.mint(userAddress).encodeABI();
+            // const nonce = await web3.eth.getTransactionCount(userAddress);
+
+
+            // console.log("After Instance => ", nonce)
+
+            // Call the mint function.
+            let result = await contract.methods.mint(userAddress, iCount)
+                .send({
+                    from: userAddress,
+                    // to: bubblexRandom_ContractAddress,
+                    // data,
+                    // gas,
+                    // gasPrice,
+                    // nonce,
+                    value: web3.utils.toWei("0.005"),
+                    // Setting the gasLimit with the estimate accuired above helps ensure accurate estimates in the wallet transaction.
+                });
+
+            // Output the result for the console during development. This will help with debugging transaction errors.
+            console.log('result => ', result);
+
+            // Refresh the gallery
+            //CheckAssetURIs();
+
+        } catch (error) {
+            // Catch any errors for any of the above operations.
+            console.error("Could not connect to wallet.", error);
+        }
+        //console.log("TEST => ", iCount)
+        //const { cryptoWrestler } = useWeb3Contracts();
+
+    }
+
+    const onSetEpicReverse = async (iCount) => {
+        if (iCount == 0) return;
+
+        // Check the Coin Network
+        if (chainID != 4) {
+            // alert("Please choose the Ethereum Mainnet");
+            alert("Please choose the Rinkyby Test Network on your Metamask");
+            return;
+        }
+
+        try {
+            // Get network provider and web3 instance.
+            const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
+            // Check the ETH balance on wallet
+            const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
+
+            if (eth_Balance < 0.1) {
+                alert("You should add min over 0.1 ETH to your wallet.");
+                return;
+            }
+
+            // Request account access if needed
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+            // Get an instance of the contract sop we can call our contract functions
+            const contract = new web3.eth.Contract(
+                BubblexABI,
+                process.env.REACT_APP_BUBBLEXEPIC_CONTRACT_ADDRESS
+            );
+
+            let totalTokenCount = await contract.methods.balanceOf(userAddress)
+                .call();
+
+            console.log("********** Epic **********  ", totalTokenCount)
+
+            if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
+                alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
+                return;
+            }
+
+
+            // Call the mint function.
+            let result = await contract.methods.mint(userAddress, iCount)
+                .send({
+                    from: userAddress,
+                    // to: bubblexRandom_ContractAddress,
+                    // data,
+                    // gas,
+                    // gasPrice,
+                    // nonce,
+                    value: web3.utils.toWei("0.005"),
+                });
+
+        } catch (error) {
+            // Catch any errors for any of the above operations.
+            console.error("Could not connect to wallet.", error);
+        }
+    }
+
+    const onSetLegendaryReverse = async (iCount) => {
+        if (iCount == 0) return;
+
+        // Check the Coin Network
+        if (chainID != 4) {
+            // alert("Please choose the Ethereum Mainnet");
+            alert("Please choose the Rinkyby Test Network on your Metamask");
+            return;
+        }
+
+        try {
+            // Get network provider and web3 instance.
+            const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
+            // Check the ETH balance on wallet
+            const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
+            
+            if (eth_Balance < 0.1){
+                alert("You should add min over 0.1 ETH to your wallet.");
+                return;
+            }
+
+
+            // Request account access if needed
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+            // Get an instance of the contract sop we can call our contract functions
+            const contract = new web3.eth.Contract(
+                BubblexABI,
+                process.env.REACT_APP_BUBBLEXLEGENDARY_CONTRACT_ADDRESS
+            );
+
+            let totalTokenCount = await contract.methods.balanceOf(userAddress)
+                .call();
+
+            console.log("********** Legendary **********  ", totalTokenCount, totalTokenCount + iCount)
+
+            if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
+                alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
+                return;
+            }
+
+            console.log(userAddress, iCount);
+
+            // Call the mint function.
+            let result = await contract.methods.mint(userAddress, iCount)
+                .send({
+                    from: userAddress,
+                    // to: bubblexLegendary_ContractAddress,
+                    // data,
+                    // gas,
+                    // gasPrice,
+                    // nonce,
+                    value: web3.utils.toWei("1"),
+                });
+
+        } catch (error) {
+            // Catch any errors for any of the above operations.
+            console.error("Could not connect to wallet.", error);
+        }
+    }
+
+
     return (
         <div className="HomeScreen">
             <div className="top">
@@ -395,8 +615,8 @@ export default function Home() {
 
             <div className="characterMakeComponent">
                 <div className="content">
-                    <img src="/image/charactermake.png" alt="" className="desktopVersion"/>
-                    <img src="/image/charactermake_mobile.png" alt="" className="mobileVersion"/>
+                    <img src="/image/charactermake.png" alt="" className="desktopVersion" />
+                    <img src="/image/charactermake_mobile.png" alt="" className="mobileVersion" />
                     <div className="makeGroup">
                         <div className="title">Get your 3D Character!</div>
                         <div className="text">If you own 2D version of BubbleX Character, you can get 3D copy of that for abillity to use it in VR BubbleX Metaverse.</div>
@@ -485,14 +705,14 @@ export default function Home() {
                                 <div className="valueGroup">
                                     <img src="/image/minusBtn.png" alt="" onClick={() => { randomCount > 0 ? setRandomCount(randomCount - 1) : setRandomCount(randomCount) }} />
                                     <div className="value">{randomCount}</div>
-                                    <img src="/image/plusBtn.png" alt="" onClick={() => setRandomCount(randomCount + 1)} />
+                                    <img src="/image/plusBtn.png" alt="" onClick={() => { randomCount == 5 ? setRandomCount(randomCount) : setRandomCount(randomCount + 1) }} />
                                 </div>
                                 <div className="text">Maximum 5 bubbles can be reserved per wallet.</div>
                                 <div className="totalValueGroup">
                                     <div className="totalText">Total</div>
                                     <div className="ethValue">0.15ETH</div>
                                 </div>
-                                <div className="reserveBtn">Reserve a Bubble</div>
+                                <div className="reserveBtn" onClick={() => onSetRandomReverse(randomCount)}>Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
                                     <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
@@ -513,14 +733,14 @@ export default function Home() {
                                 <div className="valueGroup">
                                     <img src="/image/minusBtn.png" alt="" onClick={() => { epicCount > 0 ? setEpicCount(epicCount - 1) : setEpicCount(epicCount) }} />
                                     <div className="value">{epicCount}</div>
-                                    <img src="/image/plusBtn.png" alt="" onClick={() => setEpicCount(epicCount + 1)} />
+                                    <img src="/image/plusBtn.png" alt="" onClick={() => { epicCount == 5 ? setEpicCount(epicCount) : setEpicCount(epicCount + 1) }} />
                                 </div>
                                 <div className="text">Maximum 5 bubbles can be reserved per wallet.</div>
                                 <div className="totalValueGroup">
                                     <div className="totalText">Total</div>
                                     <div className="ethValue">0.15ETH</div>
                                 </div>
-                                <div className="reserveBtn">Reserve a Bubble</div>
+                                <div className="reserveBtn" onClick={() => onSetEpicReverse(epicCount)}>Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
                                     <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
@@ -541,14 +761,14 @@ export default function Home() {
                                 <div className="valueGroup">
                                     <img src="/image/minusBtn.png" alt="" onClick={() => { legendaryCount > 0 ? setLegendaryCount(legendaryCount - 1) : setLegendaryCount(legendaryCount) }} />
                                     <div className="value">{legendaryCount}</div>
-                                    <img src="/image/plusBtn.png" alt="" onClick={() => setLegendaryCount(legendaryCount + 1)} />
+                                    <img src="/image/plusBtn.png" alt="" onClick={() => { legendaryCount == 5 ? setLegendaryCount(legendaryCount) : setLegendaryCount(legendaryCount + 1) }} />
                                 </div>
                                 <div className="text">Maximum 5 bubbles can be reserved per wallet.</div>
                                 <div className="totalValueGroup">
                                     <div className="totalText">Total</div>
                                     <div className="ethValue">0.15ETH</div>
                                 </div>
-                                <div className="reserveBtn">Reserve a Bubble</div>
+                                <div className="reserveBtn" onClick={() => onSetLegendaryReverse(legendaryCount)}>Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
                                     <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
@@ -734,7 +954,7 @@ export default function Home() {
 
                 </div>
                 {!showFaqMore ? <div className="viewMoreBtn" onClick={() => setShowFaqMore(true)}>View More</div> :
-                    <div style={{width: "100%"}}>
+                    <div style={{ width: "100%" }}>
                         <div className="faqItem">
                             <div className="content">
                                 <div className="titleBar collapsed" data-toggle="collapse" href="#faq5" role="button" area-expanded="true" area-controls="faq5">
@@ -1105,9 +1325,9 @@ export default function Home() {
                                     <div className="title">What is gas?</div>
                                     <div></div>
                                 </div>
-                                <div className="text collapse" id="faq39">Gas refers to the fee (pricing value) necessary to conduct a transaction or execute a contract on the Ethereum blockchain platform (which is the blockchain network that BubbleX is built on).<br/>
-                                The gas is used to allocate resources of the Ethereum Virtual Machine (EVM) in order for decentralized applications such as smart contracts can self-execute in a secured but decentralized manner.<br/>
-                                The supply and demand between network miners determine the precise gas price. Network miners can refuse to execute a transaction if the gas price falls below their set threshold.</div>
+                                <div className="text collapse" id="faq39">Gas refers to the fee (pricing value) necessary to conduct a transaction or execute a contract on the Ethereum blockchain platform (which is the blockchain network that BubbleX is built on).<br />
+                                    The gas is used to allocate resources of the Ethereum Virtual Machine (EVM) in order for decentralized applications such as smart contracts can self-execute in a secured but decentralized manner.<br />
+                                    The supply and demand between network miners determine the precise gas price. Network miners can refuse to execute a transaction if the gas price falls below their set threshold.</div>
                             </div>
                         </div>
 
