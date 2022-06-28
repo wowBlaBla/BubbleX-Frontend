@@ -10,6 +10,7 @@ import { providers } from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { Alert, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 import { User_Address, Injected_Wallet } from '../actions/types';
 
@@ -57,6 +58,30 @@ function Header(props) {
 
 
     //const { provider, web3, address, chainId } = useState();
+    const [showCopied, setShowCopied] = useState(false)
+    const onClickCopyBtn = (text) => {
+        console.log("Copy Test ==> ", text);
+        addressCopy(text)
+        setShowCopied(true);
+    }
+
+    const addressCopy = (address) => {
+        const el = document.createElement('textarea');
+        el.value = address;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    }
+
+    useEffect(async () => {
+        if (showCopied == true) {
+            const timer = setInterval(() => {
+                setShowCopied(false);
+                clearInterval(timer);
+            }, 2000);
+        }
+    }, [showCopied]);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -223,7 +248,17 @@ function Header(props) {
                         <img src="/image/close1.png" className='close' onClick={() => props.removeReserveClicked()} />
                         <div>
                             <div className='username'>Alex</div>
-                            <div className='address'>0x...a37V<img src="/image/copy.svg" /></div>
+                            <div className='address'>0x...a37V
+                                <CopyToClipboard text="0x...a37V">
+                                    <img src="../image/copy.svg" alt="" className="icon_copy" onClick={() => onClickCopyBtn("0x...a37V")} />
+                                </CopyToClipboard>
+                            </div>
+                            {(showCopied) ? <div className="sc-1u1vgpp-0 cVGhIP">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="14px" width="14px" viewBox="0 0 24 24" className="sc-16r8icm-0 cfMRaw cmc-icon">
+                                    <path fillRule="evenodd" clipRule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM16.7557 9.65493C17.1174 9.23758 17.0723 8.60602 16.6549 8.24431C16.2376 7.8826 15.606 7.92771 15.2443 8.34507L10.8 13.4731L8.75569 11.1143C8.39398 10.6969 7.76242 10.6518 7.34507 11.0135C6.92771 11.3752 6.8826 12.0068 7.24431 12.4242L10.0443 15.6549C10.2343 15.8741 10.51 16 10.8 16C11.09 16 11.3657 15.8741 11.5557 15.6549L16.7557 9.65493Z"></path>
+                                </svg>
+                                <span>Copied!</span>
+                            </div> : ""}
                             <img className='slamIcon' src="/image/slam.svg" />
                             <div className='slamAmount'>13.123 $SLM</div>
                             <div className='money'>$15.23 USD</div>
@@ -378,7 +413,17 @@ function Header(props) {
                                                         ?
                                                         <div>
                                                             <div className='username'>Alex</div>
-                                                            <div className='address'>0x...a37V<img src="/image/copy.svg" /></div>
+                                                            <div className='address'>0x...a37V
+                                                                <CopyToClipboard text={"0x...a37V"}>
+                                                                    <img src="../image/copy.svg" alt="" className="icon_copy" onClick={() => onClickCopyBtn("0x...a37V")} />
+                                                                </CopyToClipboard></div>
+                                                            {(showCopied) ? <div className="sc-1u1vgpp-0 cVGhIP">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="14px" width="14px" viewBox="0 0 24 24" className="sc-16r8icm-0 cfMRaw cmc-icon">
+                                                                    <path fillRule="evenodd" clipRule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM16.7557 9.65493C17.1174 9.23758 17.0723 8.60602 16.6549 8.24431C16.2376 7.8826 15.606 7.92771 15.2443 8.34507L10.8 13.4731L8.75569 11.1143C8.39398 10.6969 7.76242 10.6518 7.34507 11.0135C6.92771 11.3752 6.8826 12.0068 7.24431 12.4242L10.0443 15.6549C10.2343 15.8741 10.51 16 10.8 16C11.09 16 11.3657 15.8741 11.5557 15.6549L16.7557 9.65493Z"></path>
+                                                                </svg>
+                                                                <span>Copied!</span>
+                                                            </div> : ""}
+
                                                             <img className='slamIcon' src="/image/slam.svg" />
                                                             <div className='slamAmount'>13.123 $SLM</div>
                                                             <div className='money'>$15.23 USD</div>
@@ -431,7 +476,7 @@ function Header(props) {
                 </div>
             </div>
             <div className="menuBtnGroup">
-                <img src="/image/menu.png" alt="" onClick={() => setShowMobileSidebar(true)} />
+                <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
                 <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
             </div>
             {/* <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
