@@ -254,7 +254,7 @@ body {
     position: relative;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal {
+.header .LoginModal {
     position: absolute;
     right: 0px;
     width: 362px;
@@ -267,13 +267,13 @@ body {
     top: 75px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal>div {
+.header .LoginModal>div {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .subLoginTitle {
+.header .LoginModal .subLoginTitle {
     margin-top: 30px;
     color: #1B1B1B;
     font-weight: 700;
@@ -282,12 +282,12 @@ body {
 
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal img:not(.close) {
+.header .LoginModal img:not(.close) {
     width: 100px;
     height: 100px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .close {
+.header .LoginModal .close {
     position: absolute;
     width: 10px;
     height: 10px;
@@ -296,8 +296,8 @@ body {
     cursor: pointer;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginEmail,
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginPassword {
+.header .LoginModal .loginEmail,
+.header .LoginModal .loginPassword {
     margin-top: 25px;
     width: 100%;
     height: 70px;
@@ -310,7 +310,7 @@ body {
     color: #A9ADBD;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginBtn {
+.header .LoginModal .loginBtn {
     margin-top: 15px;
     width: 322px;
     height: 44px;
@@ -327,14 +327,14 @@ body {
     cursor: pointer;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .username {
+.header .LoginModal .username {
     font-weight: 600;
     font-size: 20px;
     line-height: 24px;
     color: #1B1B1B;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginfooter {
+.header .LoginModal .loginfooter {
     margin-top: 10px;
     font-weight: 500;
     font-size: 16px;
@@ -343,13 +343,13 @@ body {
     display: flex;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginfooter div {
+.header .LoginModal .loginfooter div {
     cursor: pointer;
     color: #216AF5;
     margin-left: 10px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .address {
+.header .LoginModal .address {
     margin-top: 15px;
     font-weight: 500;
     font-size: 18px;
@@ -358,13 +358,13 @@ body {
     position: relative;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamIcon {
+.header .LoginModal .slamIcon {
     margin-top: 30px;
     width: 60px !important;
     height: 60px !important;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamAmount {
+.header .LoginModal .slamAmount {
     margin-top: 20px;
     font-weight: 700;
     font-size: 28px;
@@ -372,7 +372,7 @@ body {
     color: #1B1B1B;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .money {
+.header .LoginModal .money {
     margin-top: 10px;
     margin-bottom: 40px;
     font-weight: 500;
@@ -381,14 +381,14 @@ body {
     color: #A9ADBD;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn {
+.header .LoginModal .visitBtn {
     margin-top: 24px;
     background: #216AF5;
     color: #FFFFFF;
     border-radius: 12px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
+.header .LoginModal .disconnectBtn {
     border: 2px solid #216AF5;
     border-radius: 8px;
     background-color: white;
@@ -396,8 +396,8 @@ body {
     margin-top: 10px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn,
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
+.header .LoginModal .visitBtn,
+.header .LoginModal .disconnectBtn {
     width: 322px;
     height: 44px;
     font-style: normal;
@@ -410,7 +410,7 @@ body {
     cursor: pointer;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .address img {
+.header .LoginModal .address img {
     position: absolute;
     width: 10.67px;
     height: 13.33px;
@@ -432,7 +432,7 @@ body {
     justify-content: center;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .Operation-title {
+.header .LoginModal .slamdetail-panel .Operation-title {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -444,7 +444,7 @@ body {
     color: #1B1B1B;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .Operation-title img {
+.header .LoginModal .slamdetail-panel .Operation-title img {
     width: 25px;
     height: 25px;
     margin-right: 10px;
@@ -455,21 +455,21 @@ body {
     color: #1B1B1B;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel {
+.header .LoginModal .slamdetail-panel {
     width: 100%;
     padding-bottom: 20px;
     border-bottom: 1px solid #D9D9D9;
     margin-bottom: 16px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel {
+.header .LoginModal .slamdetail-panel .content-panel {
     margin-top: 12.5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel .content-title {
+.header .LoginModal .slamdetail-panel .content-panel .content-title {
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
@@ -477,7 +477,7 @@ body {
     color: #5E5E5E;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel .content-detail .slamValue {
+.header .LoginModal .slamdetail-panel .content-panel .content-detail .slamValue {
     font-style: normal;
     font-weight: 700;
     font-size: 18px;
@@ -486,7 +486,7 @@ body {
     color: #1B1B1B;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel .content-detail .realValue {
+.header .LoginModal .slamdetail-panel .content-panel .content-detail .realValue {
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -4212,39 +4212,47 @@ body {
         margin: auto;
     }
 
+    .header.fixedHeader.isReserved .modal-backdrop.mobileSidebarBack {
+        display: block;
+        opacity: 0.5;
+    }
+
     .HomeScreen .buyWorldComponent .comingsoonBtn.mobileVersion {
         display: flex;
         margin-top: 52px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal {
-        width: 285px;
+    .header .LoginModal {
+        width: 90%;
         /* height: 402.31px; */
         margin-top: 10px;
         border: 1px solid #E1E4EB;
         border-radius: 12px;
+        margin-left: 5%;
+        margin-right: 5%;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .close {
+
+    .header .LoginModal .close {
         width: 7.87px;
         height: 7.87px;
         top: 15.75px;
         right: 15.75px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal img:not(.close) {
+    .header .LoginModal img:not(.close) {
         width: 79px;
         height: 79px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .subLoginTitle {
+    .header .LoginModal .subLoginTitle {
         font-size: 22px;
         line-height: 26px;
         text-align: center;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginEmail,
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginPassword {
+    .header .LoginModal .loginEmail,
+    .header .LoginModal .loginPassword {
         margin-top: 20px;
         width: 100%;
         height: 55px;
@@ -4257,7 +4265,7 @@ body {
         color: #A9ADBD;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginBtn {
+    .header .LoginModal .loginBtn {
         margin-top: 12px;
         width: 254px;
         height: 35px;
@@ -4269,7 +4277,7 @@ body {
 
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginfooter {
+    .header .LoginModal .loginfooter {
         margin-top: 8px;
         font-size: 12px;
         line-height: 15px;
@@ -4277,12 +4285,12 @@ body {
 
     /**/
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .username {
+    .header .LoginModal .username {
         font-size: 16px;
         line-height: 19px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .address img {
+    .header .LoginModal .address img {
         position: absolute;
         width: 10.67px;
         height: 13.33px;
@@ -4291,43 +4299,43 @@ body {
         top: -8px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .address {
+    .header .LoginModal .address {
         margin-top: 12px;
         font-size: 14px;
         line-height: 17px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamIcon {
+    .header .LoginModal .slamIcon {
         margin-top: 57px;
         width: 47px !important;
         height: 47px !important;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamAmount {
+    .header .LoginModal .slamAmount {
         margin-top: 16px;
         font-size: 22px;
         line-height: 6px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .money {
+    .header .LoginModal .money {
         margin-top: 8px;
         font-size: 14px;
         line-height: 17px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn {
+    .header .LoginModal .visitBtn {
         margin-top: 20px;
         border-radius: 9px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
+    .header .LoginModal .disconnectBtn {
         border: 2px solid #216AF5;
         border-radius: 6px;
         margin-top: 7px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn,
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
+    .header .LoginModal .visitBtn,
+    .header .LoginModal .disconnectBtn {
         width: 254px;
         height: 35px;
         font-size: 14px;

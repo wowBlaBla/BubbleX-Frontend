@@ -30,7 +30,7 @@ const web3Modal = new Web3Modal({
 
 function Header(props) {
     const state = useSelector(store => store.wallet);
-    const [ fixedHeader, setFixedHeader ] = useState(false);
+    const [fixedHeader, setFixedHeader] = useState(false);
     const [isReserveClicked, setIsReserveClicked] = useState(props.isReserveClicked ? props.isReserveClicked : false);
 
     const { provider, web3Provider, address, chainId } = state;
@@ -45,7 +45,7 @@ function Header(props) {
     const [isOpen, setOpenModal] = useState(false);
     const [view, setView] = useState(false);
     const [walletAddress, setWalletAddress] = useState('');
-    
+
     const [loginInfo, setLoginInfo] = useState({
         email: '',
         password: ''
@@ -71,7 +71,7 @@ function Header(props) {
     }, [])
 
     const handleScroll = (event) => {
-        if(window.scrollY >= 100) {
+        if (window.scrollY >= 100) {
             setFixedHeader(true);
         } else {
             setFixedHeader(false);
@@ -216,7 +216,44 @@ function Header(props) {
     }, [provider]);
 
     return (
-        <div className={"header " + (showMobileSidebar ? "mobileShow" : "") + (fixedHeader ? " fixedHeader" : "")}>
+        <div className={"header " + (showMobileSidebar ? "mobileShow" : "") + (fixedHeader ? " fixedHeader" : "") + (props.isReserveClicked ? " isReserved" : "")}>
+            {
+                props.isReserveClicked ?
+                    <div className="LoginModal">
+                        <img src="/image/close1.png" className='close' onClick={() => props.removeReserveClicked()} />
+                        <div>
+                            <div className='username'>Alex</div>
+                            <div className='address'>0x...a37V<img src="/image/copy.svg" /></div>
+                            <img className='slamIcon' src="/image/slam.svg" />
+                            <div className='slamAmount'>13.123 $SLM</div>
+                            <div className='money'>$15.23 USD</div>
+                            <div className='slamdetail-panel'>
+                                <div className='Operation-title'><img src="/image/operation.svg" />Operation Cost</div>
+                                <div className='content-panel'>
+                                    <div className='content-title'>Your operations costs<br /> (without transaction fee).</div>
+                                    <div className='content-detail'>
+                                        <div className='slamValue'>5 $SLM</div>
+                                        <div className='realValue'>$5.00</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='slamdetail-panel'>
+                                <div className='Operation-title'><img src="/image/gas.svg" />Gas fee</div>
+                                <div className='content-panel'>
+                                    <div className='content-title'>For this operation you<br /> should pay gas fee.</div>
+                                    <div className='content-detail'>
+                                        <div className='slamValue'>0.005 $SLM</div>
+                                        <div className='realValue'>$0.005</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='visitBtn'>Accept and Buy</div>
+                            <div className='disconnectBtn' onClick={() => props.removeReserveClicked()}>Cancel</div>
+                        </div>
+                    </div>
+                    : <></>
+            }
             <div className="header_logo">
                 <Link to="/"><img src="/image/header_logo.svg" alt="" /></Link>
                 <Link to="/"><img src="/image/footer_logo.svg" alt="" /></Link>
@@ -379,43 +416,7 @@ function Header(props) {
                                             :
                                             <></>
                                         }
-                                        {
-                                            props.isReserveClicked ? 
-                                            <div className="LoginModal">
-                                                <img src="/image/close1.png" className='close' onClick={() => props.removeReserveClicked()} />
-                                                <div>
-                                                    <div className='username'>Alex</div>
-                                                    <div className='address'>0x...a37V<img src="/image/copy.svg" /></div>
-                                                    <img className='slamIcon' src="/image/slam.svg" />
-                                                    <div className='slamAmount'>13.123 $SLM</div>
-                                                    <div className='money'>$15.23 USD</div>
-                                                    <div className='slamdetail-panel'>
-                                                        <div className='Operation-title'><img src="/image/operation.svg" />Operation Cost</div>
-                                                        <div className='content-panel'>
-                                                            <div className='content-title'>Your operations costs<br /> (without transaction fee).</div>
-                                                            <div className='content-detail'>
-                                                                <div className='slamValue'>5 $SLM</div>
-                                                                <div className='realValue'>$5.00</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
 
-                                                    <div className='slamdetail-panel'>
-                                                        <div className='Operation-title'><img src="/image/gas.svg" />Gas fee</div>
-                                                        <div className='content-panel'>
-                                                            <div className='content-title'>For this operation you<br /> should pay gas fee.</div>
-                                                            <div className='content-detail'>
-                                                                <div className='slamValue'>0.005 $SLM</div>
-                                                                <div className='realValue'>$0.005</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className='visitBtn'>Accept and Buy</div>
-                                                    <div className='disconnectBtn' onClick={() => { () => props.removeReserveClicked() }}>Cancel</div>
-                                                </div>
-                                            </div>
-                                            : <></>
-                                        }
 
                                     </div>
 
