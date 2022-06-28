@@ -5,11 +5,15 @@ import Header from "../components/Header";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import VideoPlayModal from "../components/VideoPlayModal";
+import Modal from 'react-bootstrap/Modal';
 import Web3 from "web3";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { connect, useSelector, useDispatch } from 'react-redux'
 //import { useWeb3Contracts } from "../web3/contracts";
 import BubblexABI from '../contract/BubbleX.json';
+import { Toast } from "react-bootstrap";
 
 
 export default function Home() {
@@ -24,13 +28,12 @@ export default function Home() {
     const [showFaqMore, setShowFaqMore] = useState(false);
     const videoRef = useRef(null);
     const [scrollY, setScrollY] = useState(window.scrollY);
+    const [smShow, setSmShow] = useState(false);
 
     //const userAddress = useSelector(store => store.projectSetting.userAddress);
     const userAddress = useSelector(store => store.wallet.address);
     const chainID = useSelector(store => store.wallet.chainId);
-    console.log("USer Address => " + userAddress)
-    console.log("ChainID => " + chainID)
-
+    const wallet = useSelector(store => store.wallet);
     useEffect(() => {
         setScrollY(window.scrollY);
     }, []);
@@ -72,12 +75,21 @@ export default function Home() {
         if (iCount == 0) return;
 
         // Check the Coin Network
-        if (chainID != 4) {
+        // if (chainID != 4) {
             // alert("Please choose the Ethereum Mainnet");
-            alert("Please choose the Rinkyby Test Network on your Metamask");
-            return;
-        }
+            // alert("Insufficient Funds. Have to Add Funds To your wallet.");
+            // return;
+        // }
 
+        if (wallet.address == null) {
+            // alert('Please connect wallet firstly');
+            toast.warn("Please Connect Wallet!");
+            window.scrollTo(0, 0)
+            return;
+        } else {
+            setSmShow(true);
+        }
+        return;
         try {
             // Get network provider and web3 instance.
             const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -157,12 +169,19 @@ export default function Home() {
         if (iCount == 0) return;
 
         // Check the Coin Network
-        if (chainID != 4) {
-            // alert("Please choose the Ethereum Mainnet");
-            alert("Please choose the Rinkyby Test Network on your Metamask");
+        // if (chainID != 4) {
+        //     // alert("Please choose the Ethereum Mainnet");
+        //     alert("Insufficient Funds. Have to Add Funds To your wallet.");
+        //     return;
+        // }
+        if (wallet.address == null) {
+            toast.warn("Please Connect Wallet!");
+            window.scrollTo(0, 0)
             return;
+        } else {
+            setSmShow(true);
         }
-
+        return;
         try {
             // Get network provider and web3 instance.
             const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -216,12 +235,19 @@ export default function Home() {
         if (iCount == 0) return;
 
         // Check the Coin Network
-        if (chainID != 4) {
+        // if (chainID != 4) {
             // alert("Please choose the Ethereum Mainnet");
-            alert("Please choose the Rinkyby Test Network on your Metamask");
+            // alert("Insufficient Funds. Have to Add Funds To your wallet.");
+            // return;
+        // }
+        if (wallet.address == null) {
+            toast.warn("Please Connect Wallet!");
+            window.scrollTo(0, 0)
             return;
+        } else {
+            setSmShow(true);
         }
-
+        return;
         try {
             // Get network provider and web3 instance.
             const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -285,7 +311,7 @@ export default function Home() {
 
                             <div className="content_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis no.</div>
                             <div className="content_btnGroup">
-                                <div className="purchaseBtn">Purchase</div>
+                                <a className="purchaseBtn" href="/#reserveGroup">Purchase</a>
                                 <div className="learnMore">Learn More</div>
                                 <img src="/image/top_img2.png" />
                             </div>
@@ -690,11 +716,13 @@ export default function Home() {
                     <div className="reserveGroup">
                         <div className="reserveItem">
                             <img src="/image/random.png" alt="" />
-                            <div className="titlePanel random">Random</div>
+                            <div className="titlePanel random" id="reserveGroup">Random</div>
                             <div className="itemPanel">
                                 <div className="value">
-                                    <div className="ethValue">0.15</div>
-                                    <div className="ethText">ETH</div>
+                                    <div className="ethValue">0.1</div>
+                                    <div className="ethText">BNB</div>
+                                    <div className="ethValue">/5</div>
+                                    <div className="ethText">$SLM</div>
                                 </div>
                                 <div className="textGroup">
                                     <div className="text">From Random Bubbles you may get</div>
@@ -708,11 +736,11 @@ export default function Home() {
                                     <img src="/image/plusBtn.png" alt="" onClick={() => { randomCount == 5 ? setRandomCount(randomCount) : setRandomCount(randomCount + 1) }} />
                                 </div>
                                 <div className="text">Maximum 5 bubbles can be reserved per wallet.</div>
-                                <div className="totalValueGroup">
+                                {/* <div className="totalValueGroup">
                                     <div className="totalText">Total</div>
                                     <div className="ethValue">0.15ETH</div>
-                                </div>
-                                <div className="reserveBtn" onClick={() => onSetRandomReverse(randomCount)}>Reserve a Bubble</div>
+                                </div> */}
+                                <div className="reserveBtn" onClick={() => {onSetRandomReverse(randomCount);}}>Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
                                     <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
@@ -724,8 +752,10 @@ export default function Home() {
                             <div className="titlePanel epic">Epic</div>
                             <div className="itemPanel">
                                 <div className="value">
-                                    <div className="ethValue">0.85</div>
-                                    <div className="ethText">ETH</div>
+                                    <div className="ethValue">1</div>
+                                    <div className="ethText">BNB</div>
+                                    <div className="ethValue">/15</div>
+                                    <div className="ethText">$SLM</div>
                                 </div>
                                 <div className="textGroup">
                                     <div className="text">An Epic Character will hatch from this Bubble. There are 20 Epic Bubbles available for sale.</div>
@@ -736,11 +766,11 @@ export default function Home() {
                                     <img src="/image/plusBtn.png" alt="" onClick={() => { epicCount == 5 ? setEpicCount(epicCount) : setEpicCount(epicCount + 1) }} />
                                 </div>
                                 <div className="text">Maximum 5 bubbles can be reserved per wallet.</div>
-                                <div className="totalValueGroup">
+                                {/* <div className="totalValueGroup">
                                     <div className="totalText">Total</div>
                                     <div className="ethValue">0.15ETH</div>
-                                </div>
-                                <div className="reserveBtn" onClick={() => onSetEpicReverse(epicCount)}>Reserve a Bubble</div>
+                                </div> */}
+                                <div className="reserveBtn" onClick={() => {onSetEpicReverse(epicCount);}}>Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
                                     <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
@@ -752,8 +782,10 @@ export default function Home() {
                             <div className="titlePanel legendary">Legendary</div>
                             <div className="itemPanel">
                                 <div className="value">
-                                    <div className="ethValue">12</div>
-                                    <div className="ethText">ETH</div>
+                                    <div className="ethValue">5</div>
+                                    <div className="ethText">BNB</div>
+                                    <div className="ethValue">/25</div>
+                                    <div className="ethText">$SLM</div>
                                 </div>
                                 <div className="textGroup">
                                     <div className="text">A Legendary Character will hatch from this Bubble. There are 10 Legendary Bubbles available for sale.</div>
@@ -764,11 +796,11 @@ export default function Home() {
                                     <img src="/image/plusBtn.png" alt="" onClick={() => { legendaryCount == 5 ? setLegendaryCount(legendaryCount) : setLegendaryCount(legendaryCount + 1) }} />
                                 </div>
                                 <div className="text">Maximum 5 bubbles can be reserved per wallet.</div>
-                                <div className="totalValueGroup">
+                                {/* <div className="totalValueGroup">
                                     <div className="totalText">Total</div>
                                     <div className="ethValue">0.15ETH</div>
-                                </div>
-                                <div className="reserveBtn" onClick={() => onSetLegendaryReverse(legendaryCount)}>Reserve a Bubble</div>
+                                </div> */}
+                                <div className="reserveBtn" onClick={() => {onSetLegendaryReverse(legendaryCount);}}>Reserve a Bubble</div>
                                 <div className="bubbleValueGroup">
                                     <div className="bubbleValue">0/1000</div>
                                     <div className="bubbleText">Bubbles</div>
@@ -1581,6 +1613,28 @@ export default function Home() {
                 <VideoPlayModal isShow={showVideoPlayModal} hideModal={onSetShowVideoPlayModal} />
             </div>
             <Footer />
+            <Modal
+                size="sm"
+                show={smShow}
+                onHide={() => setSmShow(false)}
+                aria-labelledby="example-modal-sizes-title-sm"
+            >
+                <Modal.Header>
+                <Modal.Title id="example-modal-sizes-title-sm">
+                    <div className="ethValue">BUY WITH:</div>
+                </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="optionContainer">
+                        <div className="imgWrap" onClick={() => {alert("Insufficient Funds...")}}>
+                            <img src="/image/bnb.png" />
+                        </div>
+                        <div className="imgWrap" onClick={() => {alert("Insufficient Funds...")}}>
+                            <img src="/image/Slam.png" />
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div >
     );
 }

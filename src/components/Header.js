@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { setIsMate } from "../actions/projectSetting";
 import { useDispatch, connect, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 import Web3Lib from 'web3';
 import Web3Modal from "web3modal";
@@ -31,7 +34,7 @@ const web3Modal = new Web3Modal({
 function Header(props) {
     const state = useSelector(store => store.wallet);
 
-    const { provider, web3Provider, address, chainId } = state;
+    const { provider, web3Provider, address, chainId, slamWallet } = state;
     const dispatch = useDispatch();
 
     const userAddress = useSelector(store => store.projectSetting.userAddress);
@@ -43,12 +46,16 @@ function Header(props) {
     const [isOpen, setOpenModal] = useState(false);
     const [view, setView] = useState(false);
     const [walletAddress, setWalletAddress] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [balance, setBalance] = useState(0);
     const [loginInfo, setLoginInfo] = useState({
         email: '',
         password: ''
     });
     const [errMsg, setErrorMsg] = useState('');
     const [loginSlamFlg, setLoginSlamFlg] = useState(0);
+    const [tokenPrice, setTokenPrice] = useState(0.18);
+    const [loadingStatus, setLoadingStatus] = useState(0);
 
     const handleClose = () => setOpenModal(false);
 
@@ -56,22 +63,18 @@ function Header(props) {
     //const { provider, web3, address, chainId } = useState();
 
     useEffect(() => {
-        const isConnected = localStorage.getItem("walletAddress") ? true : false;
-
+        const isConnected = localStorage.getItem("walletAddress") == 'null' ? false : true;
         if (isConnected) {
-            walletConnect();
+            // walletConnect();
         }
     }, [])
 
     const walletConnect = useCallback(async () => {
         try {
-            console.log("First")
             const provider = await web3Modal.connect();
             //web3 = new Web3Lib(provider);
-            console.log("Second")
             const web3Provider = new providers.Web3Provider(provider);
             
-            console.log("Third")
             const network = await web3Provider.getNetwork();
             //const accounts = await web3.eth.getAccounts();
 
@@ -107,7 +110,6 @@ function Header(props) {
             // }
             await web3Modal.clearCachedProvider();
             if (provider?.disconnect && typeof provider.disconnect === "function") {
-                alert()
                 await provider.disconnect();
                 //history.push('/');
                 setWalletAddress('');
@@ -124,37 +126,65 @@ function Header(props) {
 
     const loginSlamWallet = async () => {
         try {
-
             if (!loginInfo.email || !loginInfo.password) {
                 return;
             }
-
             let _token = {};
+            setLoadingStatus(1);
             await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/signin`, loginInfo).then(res => {
                 const { token, status, message } = res.data;
-                if (status == 'error') setErrorMsg(message);
-                else setErrorMsg('');
+                if (status == 'error') {
+                    toast.error(message);
+                    setLoginSlamFlg(0);
+                } else setErrorMsg('');
                 if (status == 'success') _token = { token };
             }).catch(error1 => {
-
+                
             });
 
             if (_token) {
                 await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
-                    const { address: _wallet } = res.data;
-                    setWalletAddress(_wallet);
-                    setLoginInfo({
-                        email: '', password: ''
-                    });
-                    setOpenModal(false);
-                    setLoginSlamFlg(1);
+                    setLoginSlamFlg(0);
+                    if(res.data.status !== 'false') {
+                        const { address: _wallet, name, slam } = res.data;
+                        setWalletAddress(_wallet);
+                        setFullName(name);
+                        setBalance(slam);
+                        setLoginSlamFlg(1);
+                        setLoginInfo({
+                            email: '', password: ''
+                        });
+                        dispatch({
+                            type: "RESET_WEB3_PROVIDER",
+                        });
+                        dispatch({ 
+                            type: 'SLAMWALLET_CONNECT',
+                            address: _wallet,
+                            slamWallet: res.data.guid
+                        })
+                        toast.success('Successfully connected...');
+                    } else {
+                        dispatch({
+                            type: "RESET_WEB3_PROVIDER",
+                        });
+                    }
+
                 }).catch(err1 => {
-                    console.log(err1);
                 })
             }
         } catch (err) {
-            console.log(err);
         }
+        setLoadingStatus(0);
+    }
+
+    const disconnectSlam = async () => {
+        setLoginSlamFlg(0); 
+        setWalletAddress(''); 
+        setFullName(''); 
+        setBalance(0);
+        dispatch({
+            type: "RESET_WEB3_PROVIDER",
+        });
     }
 
     useEffect(() => {
@@ -162,7 +192,7 @@ function Header(props) {
 
             const handleAccountsChanged = (accounts) => {
                 // eslint-disable-next-line no-console
-                console.log("accountsChanged", accounts);
+                // console.log("accountsChanged", accounts);
                 dispatch({
                     type: "SET_ADDRESS",
                     address: accounts[0],
@@ -260,7 +290,7 @@ function Header(props) {
                             </div>
                         </div>
                         <div className="menuGroup">
-                            <Link to="Presale" className={props.selected == "Presale" ? "selected" : ""}>Presale</Link>
+                            <a href="/#reserveGroup" onClick={() => setShowMobileSidebar(false)}>Presale</a>
                             <img src="/image/down1.png" alt="" />
                         </div>
                     </div>
@@ -268,75 +298,51 @@ function Header(props) {
                         {
                             !web3Provider ?
                                 <>
-                                    <div className="connectWallet" onClick={walletConnect}>Connect wallet</div>
+                                    { loginSlamFlg == 0 ? <div className="connectWallet" onClick={walletConnect}>Connect wallet</div> : "" }
                                     <div className="connectSlamWalletContent">
-                                        <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>Connect SlamWallet</div>
+                                        <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect SlamWallet" : balance + " $SLM" } </div>
                                         {isOpen ?
                                             <div className="LoginModal">
-                                                <img src="/image/close1.png" className='close' onClick={() => setOpenModal(false)} />
-                                                {loginSlamFlg == 0 ?
-                                                    <div>
-                                                        <img src="/image/slam.svg" />
-                                                        <div className="subLoginTitle">Welcome back!</div>
-                                                        {
-                                                            errMsg && (
-                                                                <Alert variant="danger">
-                                                                    <p>{errMsg}</p>
-                                                                </Alert>
-                                                            )
-                                                        }
-                                                        {/* <div className="subDes">Log in with your data that you entered during your registration.</div> */}
-                                                        <input
-                                                            type="email"
-                                                            placeholder="Enter your email "
-                                                            value={loginInfo.email}
-                                                            onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
-                                                            className="loginEmail"
-                                                        />
-                                                        {/* <div className="inputText">
-                                                    
-                                                </div> */}
-                                                        {/* <div className="inputGroup">
-                                                    <div className="label">E-mail</div>
-                                                    
-                                                </div> */}
-                                                        <input
-                                                            type={view ? "text" : "password"}
-                                                            placeholder="At least 8 characters"
-                                                            value={loginInfo.password}
-                                                            onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
-                                                            className="loginPassword"
-                                                        />
-                                                        {/* <div className="inputGroup">
-                                                    <div className="label">Password</div>
-                                                    <div className="inputText">
-                                                        
-                                                        <img src="/image/eye.png" alt="" onClick={() => setView(!view)} />
-                                                    </div>
-                                                </div> */}
-                                                        <div
-                                                            className="loginBtn"
-                                                            // onClick={loginSlamWallet}
-                                                            onClick={() => { setLoginSlamFlg(1) }}
-                                                        >Connect</div>
-                                                        <div className='loginfooter'>Don’t have an acсount yet? <div>Register</div></div>
-                                                    </div>
-                                                    :
-                                                    (loginSlamFlg == 1
-                                                        ?
+                                                {loadingStatus == 0 ? "" : <div className="loadingIcon"></div>}
+                                                <img src="/image/close1.png" className='close' alt="" onClick={() => setOpenModal(false)} />
+                                                {
+                                                    loginSlamFlg == 0 ? 
                                                         <div>
-                                                            <div className='username'>Alex</div>
-                                                            <div className='address'>0x...a37V<img src="/image/copy.svg" /></div>
-                                                            <img className='slamIcon' src="/image/slam.svg" />
-                                                            <div className='slamAmount'>13.123 $SLM</div>
-                                                            <div className='money'>$15.23 USD</div>
-                                                            <div className='visitBtn'>Visit SlamWallet</div>
-                                                            <div className='disconnectBtn' onClick={() => { setLoginSlamFlg(0) }}>Disconnect</div>
+                                                            <img src="/image/Slam.png" alt="" />
+                                                            <div className="subLoginTitle">Welcome back!</div>
+                                                            <input
+                                                                type="email"
+                                                                placeholder="Enter your email "
+                                                                value={loginInfo.email}
+                                                                onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
+                                                                className="loginEmail"
+                                                            />
+                                                            <input
+                                                                type={view ? "text" : "password"}
+                                                                placeholder="At least 8 characters"
+                                                                value={loginInfo.password}
+                                                                onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
+                                                                className="loginPassword"
+                                                            />
+                                                            <div
+                                                                className="loginBtn"
+                                                                onClick={loginSlamWallet}
+                                                            >Connect</div>
+                                                            <div className='loginfooter'>Don’t have an acсount yet? <div>Register</div></div>
                                                         </div>
-                                                        :
-                                                        <div></div>
-                                                    )
+                                                    :
+                                                    <div>
+                                                        <div className='username'>{fullName}</div>
+                                                        {/* <div className='address'>{`0x...${walletAddress.slice(-4)}`}<img src="/image/copy.svg" alt="" /></div> */}
+                                                        <img className='slamIcon' src="/image/Slam.png" alt="" />
+                                                        <div className='slamAmount'>{balance} $SLM</div>
+                                                        <div className='money'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(balance * tokenPrice)}</div>
+                                                        <a href="https://slamwallet.floki-coin.io/" rel="noreferrer" target="_blank" className='visitBtn'>Visit SlamWallet</a>
+                                                        <div className='disconnectBtn' onClick={disconnectSlam}>Disconnect</div>
+                                                    </div>
+                                            
                                                 }
+
                                             </div>
                                             :
                                             <></>
@@ -360,6 +366,7 @@ function Header(props) {
             {/* <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
 
             </Modal> */}
+            <ToastContainer />
         </div>
     )
 }

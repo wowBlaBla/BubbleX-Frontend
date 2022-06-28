@@ -4,6 +4,7 @@ const initialState = {
     web3Provider: null,
     address: null,
     chainId: null,
+    slamWallet: null,
 };
 
 export function walletReducer(state = initialState, action) {
@@ -28,6 +29,12 @@ export function walletReducer(state = initialState, action) {
             };
         case "RESET_WEB3_PROVIDER":
             return initialState;
+        case "SLAMWALLET_CONNECT":
+            return {
+                ...state,
+                address: action.address,
+                slamWallet: action.slamWallet,
+            }
         default:
             return state;
     }
