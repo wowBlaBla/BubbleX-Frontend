@@ -10,7 +10,7 @@ const initialState = {
     userEthBalance:0,
     injectedWallet: false,
     txProcessing: false,
-    isMate: false
+    isMate: false,
 }
 
 export default function projectSetting(state = initialState, action) {

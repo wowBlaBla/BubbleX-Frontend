@@ -30,15 +30,23 @@ body {
 }
 
 .header {
-    max-width: 1460px;
+    /* max-width: 1460px; */
     display: flex;
     width: 100%;
     margin: auto;
     justify-content: space-between;
-    padding-top: 32px;
+    padding-top: 25px;
+    padding-bottom: 25px;
     align-items: center;
     padding-left: 20px;
     padding-right: 20px;
+}
+
+.header.fixedHeader {
+    position: fixed;
+    top: 0px;
+    z-index: 100;
+    background-color: rgb(240, 240, 240);
 }
 
 .header.mobileShow {
@@ -54,12 +62,20 @@ body {
     display: none;
 }
 
+.header.fixedHeader>.header_logo a:last-child {
+    display: none !important;
+}
+
 .HomeScreen .header>.header_logo a:last-child {
     display: block;
 }
 
 .HomeScreen .header>.header_logo a:first-child {
     display: none;
+}
+
+.HomeScreen .header.fixedHeader>.header_logo a:first-child {
+    display: block !important;
 }
 
 .header .mobileHeader {
@@ -171,6 +187,15 @@ body {
     color: #1B1B1B;
 }
 
+.header.fixedHeader .header_menu a.selected {
+    color: #1B1B1B !important;
+}
+
+.header.fixedHeader .modal-backdrop.mobileSidebarBack
+{
+    display: none;
+}
+
 .HomeScreen .header .header_menu a.selected {
     color: white;
 }
@@ -225,39 +250,36 @@ body {
     margin-left: 40px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent
-{
+.header .header_buttonGroup .connectSlamWalletContent {
     position: relative;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal {
     position: absolute;
     right: 0px;
     width: 362px;
-    height: 511px;
+    /* height: 511px; */
     padding: 40px 20px;
     background-color: #FFFFFF;
     border-radius: 25px;
-    
+    border: 1px solid #d7dadd;
     z-index: 2;
     top: 75px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal > div {
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal>div {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .subLoginTitle
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .subLoginTitle {
     margin-top: 30px;
     color: #1B1B1B;
     font-weight: 700;
     font-size: 28px;
     line-height: 33px;
-    
+
 }
 
 .header .header_buttonGroup .connectSlamWalletContent .LoginModal img:not(.close) {
@@ -274,8 +296,8 @@ body {
     cursor: pointer;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginEmail, .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginPassword
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginEmail,
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginPassword {
     margin-top: 25px;
     width: 100%;
     height: 70px;
@@ -288,8 +310,7 @@ body {
     color: #A9ADBD;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginBtn 
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginBtn {
     margin-top: 15px;
     width: 322px;
     height: 44px;
@@ -306,8 +327,7 @@ body {
     cursor: pointer;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .username
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .username {
     font-weight: 600;
     font-size: 20px;
     line-height: 24px;
@@ -329,25 +349,22 @@ body {
     margin-left: 10px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .address
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .address {
     margin-top: 15px;
-        font-weight: 500;
+    font-weight: 500;
     font-size: 18px;
     line-height: 22px;
     color: #A9ADBD;
     position: relative;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamIcon
-{
-    margin-top: 72px;
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamIcon {
+    margin-top: 30px;
     width: 60px !important;
     height: 60px !important;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamAmount
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamAmount {
     margin-top: 20px;
     font-weight: 700;
     font-size: 28px;
@@ -355,25 +372,23 @@ body {
     color: #1B1B1B;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .money
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .money {
     margin-top: 10px;
+    margin-bottom: 40px;
     font-weight: 500;
     font-size: 18px;
     line-height: 22px;
     color: #A9ADBD;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn
-{
-    margin-top: 55px;
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn {
+    margin-top: 24px;
     background: #216AF5;
     color: #FFFFFF;
     border-radius: 12px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
     border: 2px solid #216AF5;
     border-radius: 8px;
     background-color: white;
@@ -381,8 +396,8 @@ body {
     margin-top: 10px;
 }
 
-.header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn, .header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn
-{
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn,
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
     width: 322px;
     height: 44px;
     font-style: normal;
@@ -415,6 +430,69 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .Operation-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: #1B1B1B;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .Operation-title img {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: #1B1B1B;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel {
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #D9D9D9;
+    margin-bottom: 16px;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel {
+    margin-top: 12.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel .content-title {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 22px;
+    color: #5E5E5E;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel .content-detail .slamValue {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: right;
+    color: #1B1B1B;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent .LoginModal .slamdetail-panel .content-panel .content-detail .realValue {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: right;
+    color: #A9ADBD;
 }
 
 /* HomeScreen */
@@ -524,7 +602,7 @@ body {
 
 .HomeScreen .top .top_main .bubble_video .video_img {
 
-    width: 80%;
+    /* width: 80%; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -735,7 +813,9 @@ body {
 
 }
 
-.HomeScreen>.bubbleContent .line4, .HomeScreen>.bubbleContent .line5, .HomeScreen>.bubbleContent .line6 {
+.HomeScreen>.bubbleContent .line4,
+.HomeScreen>.bubbleContent .line5,
+.HomeScreen>.bubbleContent .line6 {
     display: none;
 }
 
@@ -1389,7 +1469,7 @@ body {
     box-shadow: none;
     display: flex;
     align-items: center;
-    
+
     overflow: hidden;
     border: 1px solid #ededed;
 }
@@ -1950,7 +2030,8 @@ body {
     height: 10px;
 }
 
-.HomeScreen .buyWorldComponent .carousel .control-arrow:before, .carousel.carousel-slider .control-arrow:before {
+.HomeScreen .buyWorldComponent .carousel .control-arrow:before,
+.carousel.carousel-slider .control-arrow:before {
     display: none !important;
 }
 
@@ -2120,7 +2201,8 @@ body {
     background: linear-gradient(142.19deg, #7AA8FF 4.05%, #216AF5 100.93%), #F8F8F8;
 }
 
-.HomeScreen .content10 .content1 img, .HomeScreen .content10 .content2 img {
+.HomeScreen .content10 .content1 img,
+.HomeScreen .content10 .content2 img {
     position: absolute;
 }
 
@@ -2557,7 +2639,8 @@ body {
         line-height: 20px;
     }
 
-    .HomeScreen .top .top_main .top_content .content_btnGroup .purchaseBtn, .HomeScreen .top .top_main .top_content .content_btnGroup .learnMore {
+    .HomeScreen .top .top_main .top_content .content_btnGroup .purchaseBtn,
+    .HomeScreen .top .top_main .top_content .content_btnGroup .learnMore {
         width: 150px;
         height: 50px;
     }
@@ -2578,7 +2661,8 @@ body {
         line-height: 15px;
     }
 
-    .header .header_buttonGroup .connectWallet, .header .header_buttonGroup .disconnectWallet {
+    .header .header_buttonGroup .connectWallet,
+    .header .header_buttonGroup .disconnectWallet {
         width: 140px;
         height: 35px;
         border-radius: 8px;
@@ -2967,7 +3051,7 @@ body {
         width: 100%;
         height: 49px;
         margin-top: 15px;
-        margin-left:0px;
+        margin-left: 0px;
         box-sizing: border-box;
         border-radius: 15px;
     }
@@ -3151,11 +3235,15 @@ body {
         margin-top: 70px;
     }
 
-    .HomeScreen>.bubbleContent .line1, .HomeScreen>.bubbleContent .line2, .HomeScreen>.bubbleContent .line3 {
+    .HomeScreen>.bubbleContent .line1,
+    .HomeScreen>.bubbleContent .line2,
+    .HomeScreen>.bubbleContent .line3 {
         display: none;
     }
 
-    .HomeScreen>.bubbleContent .line4, .HomeScreen>.bubbleContent .line5, .HomeScreen>.bubbleContent .line6 {
+    .HomeScreen>.bubbleContent .line4,
+    .HomeScreen>.bubbleContent .line5,
+    .HomeScreen>.bubbleContent .line6 {
         display: block;
     }
 
@@ -4131,11 +4219,11 @@ body {
 
     .header .header_buttonGroup .connectSlamWalletContent .LoginModal {
         width: 285px;
-        height: 402.31px;
+        /* height: 402.31px; */
         margin-top: 10px;
         border: 1px solid #E1E4EB;
         border-radius: 12px;
-    }    
+    }
 
     .header .header_buttonGroup .connectSlamWalletContent .LoginModal .close {
         width: 7.87px;
@@ -4155,7 +4243,8 @@ body {
         text-align: center;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginEmail, .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginPassword {
+    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginEmail,
+    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginPassword {
         margin-top: 20px;
         width: 100%;
         height: 55px;
@@ -4172,12 +4261,12 @@ body {
         margin-top: 12px;
         width: 254px;
         height: 35px;
-        
+
         border-radius: 9px;
         font-weight: 600;
         font-size: 14px;
         line-height: 17px;
-        
+
     }
 
     .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loginfooter {
@@ -4187,7 +4276,7 @@ body {
     }
 
     /**/
-    
+
     .header .header_buttonGroup .connectSlamWalletContent .LoginModal .username {
         font-size: 16px;
         line-height: 19px;
@@ -4227,7 +4316,7 @@ body {
     }
 
     .header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn {
-        margin-top: 44px;
+        margin-top: 20px;
         border-radius: 9px;
     }
 
@@ -4237,12 +4326,13 @@ body {
         margin-top: 7px;
     }
 
-    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn, .header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
+    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .visitBtn,
+    .header .header_buttonGroup .connectSlamWalletContent .LoginModal .disconnectBtn {
         width: 254px;
         height: 35px;
         font-size: 14px;
         line-height: 17px;
-        
+
     }
 }
 
@@ -4340,7 +4430,8 @@ body {
     margin-top: 30px;
 }
 
-.CharacterMarketplaceScreen>.characterContent>.content .content1 .sellBtn, .CharacterMarketplaceScreen>.characterContent>.content .content1 .mateBtn {
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .sellBtn,
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .mateBtn {
     border-radius: 15px;
     width: 200px;
     height: 75px;
@@ -4349,7 +4440,8 @@ body {
     cursor: pointer;
 }
 
-.CharacterMarketplaceScreen>.characterContent>.content .content1 .sellBtn>div, .CharacterMarketplaceScreen>.characterContent>.content .content1 .mateBtn>div {
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .sellBtn>div,
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .mateBtn>div {
     font-style: normal;
     font-weight: 800;
     font-size: 18px;
@@ -4503,7 +4595,8 @@ body {
     margin-top: 30px;
 }
 
-.CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .topPanel, .CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .bottomPanel {
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .topPanel,
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .bottomPanel {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -4630,7 +4723,8 @@ body {
     z-index: 1041;
 }
 
-.CharacterMarketplaceScreen>.characterContent>.content .content1 .mateBtn, .CharacterMarketplaceScreen>.characterContent>.content .content1 .makeBtn {
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .mateBtn,
+.CharacterMarketplaceScreen>.characterContent>.content .content1 .makeBtn {
     border: 1px solid rgba(233, 64, 233, 1);
     margin-left: 27px;
     color: #E539E5;
@@ -4787,7 +4881,8 @@ body {
     text-align: left;
 }
 
-.HistoryComponent .historyContent .content2, .HistoryComponent .historyContent .content3 {
+.HistoryComponent .historyContent .content2,
+.HistoryComponent .historyContent .content3 {
     width: 30%;
 }
 
@@ -5345,7 +5440,8 @@ body {
         margin-top: 5px;
     }
 
-    .CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .sellBtn, .CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .mateBtn {
+    .CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .sellBtn,
+    .CharacterMarketplaceScreen>.characterContent>.content .content1 .chartPanel .mateBtn {
         margin-top: 20px;
         width: 100%;
         height: 55px;
@@ -5412,7 +5508,8 @@ body {
         height: 16.6px;
     }
 
-    .CharacterMarketplaceScreen>.characterContent>.content .content1 .buttonGroup .mateBtn, .CharacterMarketplaceScreen>.characterContent>.content .content1 .buttonGroup .makeBtn {
+    .CharacterMarketplaceScreen>.characterContent>.content .content1 .buttonGroup .mateBtn,
+    .CharacterMarketplaceScreen>.characterContent>.content .content1 .buttonGroup .makeBtn {
         margin-left: 20px;
     }
 
@@ -5471,7 +5568,8 @@ body {
         line-height: 17px;
     }
 
-    .attributeComponent .statGroup>div:nth-child(3), .attributeComponent .statGroup>div:nth-child(4) {
+    .attributeComponent .statGroup>div:nth-child(3),
+    .attributeComponent .statGroup>div:nth-child(4) {
         margin-top: 20px;
     }
 
@@ -5577,7 +5675,8 @@ body {
         height: 24px;
     }
 
-    .CharacterMarketplaceScreen .content .sellContent .content1 .cancelBtn, .CharacterMarketplaceScreen .content .sellContent .content1 .confirmBtn {
+    .CharacterMarketplaceScreen .content .sellContent .content1 .cancelBtn,
+    .CharacterMarketplaceScreen .content .sellContent .content1 .confirmBtn {
         width: 158px;
         height: 55px;
         border-radius: 10px;
@@ -5602,7 +5701,8 @@ body {
         margin-top: 15px;
     }
 
-    .CharacterMarketplaceScreen .mateContent>.content .heartGroup img:first-child, .CharacterMarketplaceScreen .mateContent>.content .heartGroup img:last-child {
+    .CharacterMarketplaceScreen .mateContent>.content .heartGroup img:first-child,
+    .CharacterMarketplaceScreen .mateContent>.content .heartGroup img:last-child {
         width: 58.07px;
         height: 59.56px;
     }
@@ -5782,6 +5882,7 @@ body {
 .SlamWallet .Content {
     padding: 40px;
 }
+
 .SlamWallet .Content .subLoginTitle {
     font-family: SF Pro Display Regular;
     font-style: normal;
@@ -5908,7 +6009,8 @@ body {
 .ReservedBubbleX .mainContent .selectedNFTImg {
     width: 300px;
     border: 2px solid #E1E4EB;
-    border-radius: 10px;;
+    border-radius: 10px;
+    ;
     margin-right: 100px;
 }
 
@@ -5955,7 +6057,7 @@ body {
         width: 100%;
     }
 
-    
+
 
     /* .ReservedBubbleX .react-tabs__tab-panel {
         padding-right: 15px;
@@ -6005,7 +6107,8 @@ body {
 .Admin .mainContent .selectedNFTImg {
     width: 300px;
     border: 2px solid #E1E4EB;
-    border-radius: 10px;;
+    border-radius: 10px;
+    ;
     margin-right: 100px;
 }
 
@@ -6052,5 +6155,5 @@ body {
         width: 100%;
     }
 
-    
+
 }

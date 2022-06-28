@@ -22,6 +22,7 @@ export default function Home() {
     const [showVideo1, setShowVideo1] = useState(false);
     const [showVideoPlayModal, setShowVideoPlayModal] = useState(false);
     const [showFaqMore, setShowFaqMore] = useState(false);
+    const [isReserveClicked, setIsReserveClicked] = useState(false);
     const videoRef = useRef(null);
     const [scrollY, setScrollY] = useState(window.scrollY);
 
@@ -69,208 +70,214 @@ export default function Home() {
     }
 
     const onSetRandomReverse = async (iCount) => {
-        if (iCount == 0) return;
+        // if (iCount == 0) return;
 
-        // Check the Coin Network
-        if (chainID != 4) {
-            // alert("Please choose the Ethereum Mainnet");
-            alert("Please choose the Rinkyby Test Network on your Metamask");
-            return;
-        }
+        // // Check the Coin Network
+        // if (chainID != 4) {
+        //     // alert("Please choose the Ethereum Mainnet");
+        //     alert("Please choose the Rinkyby Test Network on your Metamask");
+        //     return;
+        // }
 
-        try {
-            // Get network provider and web3 instance.
-            const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+        // try {
+        //     // Get network provider and web3 instance.
+        //     const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
-            // Check the ETH balance on wallet
-            const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
+        //     // Check the ETH balance on wallet
+        //     const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
 
-            if (eth_Balance < 0.1) {
-                alert("You should add min over 0.1 ETH to your wallet.");
-                return;
-            }
+        //     if (eth_Balance < 0.1) {
+        //         alert("You should add min over 0.1 ETH to your wallet.");
+        //         return;
+        //     }
 
-            // Request account access if needed
-            window.ethereum.request({ method: 'eth_requestAccounts' })
+        //     // Request account access if needed
+        //     window.ethereum.request({ method: 'eth_requestAccounts' })
 
-            // Get an instance of the contract sop we can call our contract functions
-            const contract = new web3.eth.Contract(
-                BubblexABI,
-                process.env.REACT_APP_BUBBLEXRANDOM_CONTRACT_ADDRESS
-            );
-            console.log("Instance => ", userAddress)
+        //     // Get an instance of the contract sop we can call our contract functions
+        //     const contract = new web3.eth.Contract(
+        //         BubblexABI,
+        //         process.env.REACT_APP_BUBBLEXRANDOM_CONTRACT_ADDRESS
+        //     );
+        //     console.log("Instance => ", userAddress)
 
-            let totalTokenCount = await contract.methods.balanceOf(userAddress)
-                .call();
+        //     let totalTokenCount = await contract.methods.balanceOf(userAddress)
+        //         .call();
 
-            console.log("********** Random ********** \n ", totalTokenCount)
+        //     console.log("********** Random ********** \n ", totalTokenCount)
 
-            if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
-                alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
-                return;
-            }
-            // let gas;
+        //     if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
+        //         alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
+        //         return;
+        //     }
+        //     // let gas;
 
-            // try {
-            //     // // Estimate the gas required for the transaction
-            //     gas = await contract.methods.mint(userAddress).estimateGas({from: userAddress});
-            // }catch (e) {
-            //     console.log(e)
-            // }
+        //     // try {
+        //     //     // // Estimate the gas required for the transaction
+        //     //     gas = await contract.methods.mint(userAddress).estimateGas({from: userAddress});
+        //     // }catch (e) {
+        //     //     console.log(e)
+        //     // }
 
-            // const gasPrice = await web3.eth.getGasPrice();
-            // const data = contract.methods.mint(userAddress).encodeABI();
-            // const nonce = await web3.eth.getTransactionCount(userAddress);
+        //     // const gasPrice = await web3.eth.getGasPrice();
+        //     // const data = contract.methods.mint(userAddress).encodeABI();
+        //     // const nonce = await web3.eth.getTransactionCount(userAddress);
 
 
-            // console.log("After Instance => ", nonce)
+        //     // console.log("After Instance => ", nonce)
 
-            // Call the mint function.
-            let result = await contract.methods.mint(userAddress, iCount)
-                .send({
-                    from: userAddress,
-                    // to: bubblexRandom_ContractAddress,
-                    // data,
-                    // gas,
-                    // gasPrice,
-                    // nonce,
-                    value: web3.utils.toWei("0.005"),
-                    // Setting the gasLimit with the estimate accuired above helps ensure accurate estimates in the wallet transaction.
-                });
+        //     // Call the mint function.
+        //     let result = await contract.methods.mint(userAddress, iCount)
+        //         .send({
+        //             from: userAddress,
+        //             // to: bubblexRandom_ContractAddress,
+        //             // data,
+        //             // gas,
+        //             // gasPrice,
+        //             // nonce,
+        //             value: web3.utils.toWei("0.005"),
+        //             // Setting the gasLimit with the estimate accuired above helps ensure accurate estimates in the wallet transaction.
+        //         });
 
-            // Output the result for the console during development. This will help with debugging transaction errors.
-            console.log('result => ', result);
+        //     // Output the result for the console during development. This will help with debugging transaction errors.
+        //     console.log('result => ', result);
 
-            // Refresh the gallery
-            //CheckAssetURIs();
+        //     // Refresh the gallery
+        //     //CheckAssetURIs();
 
-        } catch (error) {
-            // Catch any errors for any of the above operations.
-            console.error("Could not connect to wallet.", error);
-        }
+        // } catch (error) {
+        //     // Catch any errors for any of the above operations.
+        //     console.error("Could not connect to wallet.", error);
+        // }
         //console.log("TEST => ", iCount)
         //const { cryptoWrestler } = useWeb3Contracts();
-
+        setIsReserveClicked(true);
     }
 
     const onSetEpicReverse = async (iCount) => {
-        if (iCount == 0) return;
+        // if (iCount == 0) return;
 
-        // Check the Coin Network
-        if (chainID != 4) {
-            // alert("Please choose the Ethereum Mainnet");
-            alert("Please choose the Rinkyby Test Network on your Metamask");
-            return;
-        }
+        // // Check the Coin Network
+        // if (chainID != 4) {
+        //     // alert("Please choose the Ethereum Mainnet");
+        //     alert("Please choose the Rinkyby Test Network on your Metamask");
+        //     return;
+        // }
 
-        try {
-            // Get network provider and web3 instance.
-            const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+        // try {
+        //     // Get network provider and web3 instance.
+        //     const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
-            // Check the ETH balance on wallet
-            const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
+        //     // Check the ETH balance on wallet
+        //     const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
 
-            if (eth_Balance < 0.1) {
-                alert("You should add min over 0.1 ETH to your wallet.");
-                return;
-            }
+        //     if (eth_Balance < 0.1) {
+        //         alert("You should add min over 0.1 ETH to your wallet.");
+        //         return;
+        //     }
 
-            // Request account access if needed
-            window.ethereum.request({ method: 'eth_requestAccounts' })
-            // Get an instance of the contract sop we can call our contract functions
-            const contract = new web3.eth.Contract(
-                BubblexABI,
-                process.env.REACT_APP_BUBBLEXEPIC_CONTRACT_ADDRESS
-            );
+        //     // Request account access if needed
+        //     window.ethereum.request({ method: 'eth_requestAccounts' })
+        //     // Get an instance of the contract sop we can call our contract functions
+        //     const contract = new web3.eth.Contract(
+        //         BubblexABI,
+        //         process.env.REACT_APP_BUBBLEXEPIC_CONTRACT_ADDRESS
+        //     );
 
-            let totalTokenCount = await contract.methods.balanceOf(userAddress)
-                .call();
+        //     let totalTokenCount = await contract.methods.balanceOf(userAddress)
+        //         .call();
 
-            console.log("********** Epic **********  ", totalTokenCount)
+        //     console.log("********** Epic **********  ", totalTokenCount)
 
-            if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
-                alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
-                return;
-            }
+        //     if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
+        //         alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
+        //         return;
+        //     }
 
 
-            // Call the mint function.
-            let result = await contract.methods.mint(userAddress, iCount)
-                .send({
-                    from: userAddress,
-                    // to: bubblexRandom_ContractAddress,
-                    // data,
-                    // gas,
-                    // gasPrice,
-                    // nonce,
-                    value: web3.utils.toWei("0.005"),
-                });
+        //     // Call the mint function.
+        //     let result = await contract.methods.mint(userAddress, iCount)
+        //         .send({
+        //             from: userAddress,
+        //             // to: bubblexRandom_ContractAddress,
+        //             // data,
+        //             // gas,
+        //             // gasPrice,
+        //             // nonce,
+        //             value: web3.utils.toWei("0.005"),
+        //         });
 
-        } catch (error) {
-            // Catch any errors for any of the above operations.
-            console.error("Could not connect to wallet.", error);
-        }
+        // } catch (error) {
+        //     // Catch any errors for any of the above operations.
+        //     console.error("Could not connect to wallet.", error);
+        // }
+        setIsReserveClicked(true);
     }
 
     const onSetLegendaryReverse = async (iCount) => {
-        if (iCount == 0) return;
+        // if (iCount == 0) return;
 
-        // Check the Coin Network
-        if (chainID != 4) {
-            // alert("Please choose the Ethereum Mainnet");
-            alert("Please choose the Rinkyby Test Network on your Metamask");
-            return;
-        }
+        // // Check the Coin Network
+        // if (chainID != 4) {
+        //     // alert("Please choose the Ethereum Mainnet");
+        //     alert("Please choose the Rinkyby Test Network on your Metamask");
+        //     return;
+        // }
 
-        try {
-            // Get network provider and web3 instance.
-            const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+        // try {
+        //     // Get network provider and web3 instance.
+        //     const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
-            // Check the ETH balance on wallet
-            const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
+        //     // Check the ETH balance on wallet
+        //     const eth_Balance = await web3.utils.fromWei(await web3.eth.getBalance(userAddress));
             
-            if (eth_Balance < 0.1){
-                alert("You should add min over 0.1 ETH to your wallet.");
-                return;
-            }
+        //     if (eth_Balance < 0.1){
+        //         alert("You should add min over 0.1 ETH to your wallet.");
+        //         return;
+        //     }
 
 
-            // Request account access if needed
-            window.ethereum.request({ method: 'eth_requestAccounts' })
-            // Get an instance of the contract sop we can call our contract functions
-            const contract = new web3.eth.Contract(
-                BubblexABI,
-                process.env.REACT_APP_BUBBLEXLEGENDARY_CONTRACT_ADDRESS
-            );
+        //     // Request account access if needed
+        //     window.ethereum.request({ method: 'eth_requestAccounts' })
+        //     // Get an instance of the contract sop we can call our contract functions
+        //     const contract = new web3.eth.Contract(
+        //         BubblexABI,
+        //         process.env.REACT_APP_BUBBLEXLEGENDARY_CONTRACT_ADDRESS
+        //     );
 
-            let totalTokenCount = await contract.methods.balanceOf(userAddress)
-                .call();
+        //     let totalTokenCount = await contract.methods.balanceOf(userAddress)
+        //         .call();
 
-            console.log("********** Legendary **********  ", totalTokenCount, totalTokenCount + iCount)
+        //     console.log("********** Legendary **********  ", totalTokenCount, totalTokenCount + iCount)
 
-            if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
-                alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
-                return;
-            }
+        //     if ((Number.parseInt(totalTokenCount)  + iCount) > 5) {
+        //         alert("You already minted " + totalTokenCount + " bubbles.\n", "Maximum 5 bubbles can be reserved per wallet.\n", "You can reserve max " + (5 - Number.parseInt(totalTokenCount)) + " bubbles.");
+        //         return;
+        //     }
 
-            console.log(userAddress, iCount);
+        //     console.log(userAddress, iCount);
 
-            // Call the mint function.
-            let result = await contract.methods.mint(userAddress, iCount)
-                .send({
-                    from: userAddress,
-                    // to: bubblexLegendary_ContractAddress,
-                    // data,
-                    // gas,
-                    // gasPrice,
-                    // nonce,
-                    value: web3.utils.toWei("1"),
-                });
+        //     // Call the mint function.
+        //     let result = await contract.methods.mint(userAddress, iCount)
+        //         .send({
+        //             from: userAddress,
+        //             // to: bubblexLegendary_ContractAddress,
+        //             // data,
+        //             // gas,
+        //             // gasPrice,
+        //             // nonce,
+        //             value: web3.utils.toWei("1"),
+        //         });
 
-        } catch (error) {
-            // Catch any errors for any of the above operations.
-            console.error("Could not connect to wallet.", error);
-        }
+        // } catch (error) {
+        //     // Catch any errors for any of the above operations.
+        //     console.error("Could not connect to wallet.", error);
+        // }
+        setIsReserveClicked(true);
+    }
+
+    const removeReserveClicked = () => {
+        setIsReserveClicked(false);
     }
 
 
@@ -278,7 +285,7 @@ export default function Home() {
         <div className="HomeScreen">
             <div className="top">
                 <div className="background">
-                    <Header selected="Home" />
+                    <Header selected="Home" isReserveClicked = {isReserveClicked} removeReserveClicked = {removeReserveClicked}/>
                     <div className="top_main">
                         <div className="top_content">
                             <div className="content_title">Collect and earn on <font color="#216AF5">NFT<img src="/image/top_img1.png" /></font> bubbles</div>
@@ -292,7 +299,7 @@ export default function Home() {
                         </div>
                         <div className="bubble_video">
                             <div className="video_img">
-                                <img src="/image/headerImg.svg" alt="" />
+                                <img src="/image/Group.png" alt="" />
                             </div>
                         </div>
                     </div>
