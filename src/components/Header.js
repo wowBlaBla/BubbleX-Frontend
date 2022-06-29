@@ -6,7 +6,6 @@ import PropTypes from 'prop-types'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 import Web3Lib from 'web3';
 import Web3Modal from "web3modal";
 import { providers } from 'ethers'
@@ -63,9 +62,9 @@ function Header(props) {
     //const { provider, web3, address, chainId } = useState();
 
     useEffect(() => {
-        const isConnected = localStorage.getItem("walletAddress") == 'null' ? false : true;
+        const isConnected = localStorage.getItem("walletAddress").length > 40 ? true : false;
         if (isConnected) {
-            // walletConnect();
+            walletConnect();
         }
     }, [])
 
@@ -110,6 +109,7 @@ function Header(props) {
             // }
             await web3Modal.clearCachedProvider();
             if (provider?.disconnect && typeof provider.disconnect === "function") {
+                alert()
                 await provider.disconnect();
                 //history.push('/');
                 setWalletAddress('');
@@ -117,7 +117,7 @@ function Header(props) {
             dispatch({
                 type: "RESET_WEB3_PROVIDER",
             });
-            localStorage.setItem('walletAddress', null);
+            localStorage.setItem('walletAddress', 0);
 
 
         },
@@ -144,7 +144,6 @@ function Header(props) {
 
             if (_token) {
                 await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
-                    setLoginSlamFlg(0);
                     if(res.data.status !== 'false') {
                         const { address: _wallet, name, slam } = res.data;
                         setWalletAddress(_wallet);
@@ -162,17 +161,20 @@ function Header(props) {
                             address: _wallet,
                             slamWallet: res.data.guid
                         })
-                        toast.success('Successfully connected...');
+                        toast.success('Successfully Connected!');
                     } else {
+                        setLoginSlamFlg(0);
                         dispatch({
                             type: "RESET_WEB3_PROVIDER",
                         });
                     }
 
                 }).catch(err1 => {
+                    setLoginSlamFlg(0);
                 })
             }
         } catch (err) {
+            console.log(err);
         }
         setLoadingStatus(0);
     }
@@ -185,6 +187,7 @@ function Header(props) {
         dispatch({
             type: "RESET_WEB3_PROVIDER",
         });
+        localStorage.setItem('walletAddress', 0);
     }
 
     useEffect(() => {
@@ -300,7 +303,7 @@ function Header(props) {
                                 <>
                                     { loginSlamFlg == 0 ? <div className="connectWallet" onClick={walletConnect}>Connect wallet</div> : "" }
                                     <div className="connectSlamWalletContent">
-                                        <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect SlamWallet" : balance + " $SLM" } </div>
+                                        <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect" : "Connected" } SlamWallet</div>
                                         {isOpen ?
                                             <div className="LoginModal">
                                                 {loadingStatus == 0 ? "" : <div className="loadingIcon"></div>}
@@ -337,7 +340,7 @@ function Header(props) {
                                                         <img className='slamIcon' src="/image/Slam.png" alt="" />
                                                         <div className='slamAmount'>{balance} $SLM</div>
                                                         <div className='money'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(balance * tokenPrice)}</div>
-                                                        <a href="https://slamwallet.floki-coin.io/" rel="noreferrer" target="_blank" className='visitBtn'>Visit SlamWallet</a>
+                                                        <a href="https://slamwallet.floki-coin.io/" target="_blank" className='visitBtn'>Visit SlamWallet</a>
                                                         <div className='disconnectBtn' onClick={disconnectSlam}>Disconnect</div>
                                                     </div>
                                             
@@ -366,7 +369,7 @@ function Header(props) {
             {/* <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
 
             </Modal> */}
-            <ToastContainer />
+            <ToastContainer></ToastContainer>
         </div>
     )
 }
