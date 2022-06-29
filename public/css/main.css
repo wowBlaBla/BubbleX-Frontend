@@ -191,8 +191,7 @@ body {
     color: #1B1B1B !important;
 }
 
-.header.fixedHeader .modal-backdrop.mobileSidebarBack
-{
+.header.fixedHeader .modal-backdrop.mobileSidebarBack {
     display: none;
 }
 
@@ -770,6 +769,8 @@ body {
 .HomeScreen>.content2 .content {
     width: 720px;
     z-index: 1;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
 .HomeScreen>.content2 .content .title {
@@ -2889,6 +2890,8 @@ body {
         padding-top: 0px;
         position: relative;
         /* padding-left: 20px; */
+        height: 80px;
+        padding-bottom: 40px;
     }
 
     .header>.header_logo {
@@ -3026,7 +3029,7 @@ body {
         width: 100%;
         flex-direction: column;
         background: white;
-        height: calc(100vh + 130px);
+        height: calc(100vh + 300px);
         padding: 50px 40px 0px 20px;
         justify-content: unset;
         /* margin-left: 30px; */
