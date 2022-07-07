@@ -33,7 +33,7 @@ const web3Modal = new Web3Modal({
 
 function Header(props) {
     const state = useSelector(store => store.wallet);
-
+    const [fixedHeader, setFixedHeader] = useState(false);
     const { provider, web3Provider, address, chainId, slamWallet } = state;
     const dispatch = useDispatch();
 
@@ -86,12 +86,32 @@ function Header(props) {
         }
     }, [showCopied]);
 
+    // useEffect(() => {
+    //     const isConnected = localStorage.getItem("walletAddress").length > 40 ? true : false;
+    //     if (isConnected) {
+    //         walletConnect();
+    //     }
+    // }, [])
+
     useEffect(() => {
-        const isConnected = localStorage.getItem("walletAddress").length > 40 ? true : false;
+        window.addEventListener('scroll', handleScroll);
+        const isConnected = localStorage.getItem("walletAddress") ? true : false;
+
         if (isConnected) {
             walletConnect();
         }
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        }
     }, [])
+
+    const handleScroll = (event) => {
+        if (window.scrollY >= 50) {
+            setFixedHeader(true);
+        } else {
+            setFixedHeader(false);
+        }
+    }
 
     const walletConnect = useCallback(async () => {
         try {
@@ -166,6 +186,8 @@ function Header(props) {
             }).catch(error1 => {
                 
             });
+
+            console.log("test => ", _token)
 
             if (_token) {
                 await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
@@ -259,9 +281,6 @@ function Header(props) {
     }, [provider]);
 
     return (
-<<<<<<< HEAD
-        <div className={"header " + (showMobileSidebar ? "mobileShow" : "")}>
-=======
         <div className={"header " + (showMobileSidebar ? "mobileShow" : "") + (fixedHeader ? " fixedHeader" : "") + (props.isReserveClicked ? " isReserved" : "")}>
             {
                 props.isReserveClicked ?
@@ -310,7 +329,6 @@ function Header(props) {
                     </div>
                     : <></>
             }
->>>>>>> 3233c218d551b446f9103657fdd7f327a9534eaa
             <div className="header_logo">
                 <Link to="/"><img src="/image/header_logo.svg" alt="" /></Link>
                 <Link to="/"><img src="/image/footer_logo.svg" alt="" /></Link>
@@ -382,12 +400,58 @@ function Header(props) {
                                         <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect" : "Connected" } SlamWallet</div>
                                         {isOpen ?
                                             <div className="LoginModal">
-                                                {loadingStatus == 0 ? "" : <div className="loadingIcon"></div>}
-                                                <img src="/image/close1.png" className='close' alt="" onClick={() => setOpenModal(false)} />
-                                                {
-                                                    loginSlamFlg == 0 ? 
-                                                        <div>
-<<<<<<< HEAD
+                                                <img src="/image/close1.png" className='close' onClick={() => setOpenModal(false)} />
+                                                {loginSlamFlg == 0 ?
+                                                    <div>
+                                                        <img src="/image/slam.svg" />
+                                                        <div className="subLoginTitle">Welcome back!</div>
+                                                        {
+                                                            errMsg && (
+                                                                <Alert variant="danger">
+                                                                    <p>{errMsg}</p>
+                                                                </Alert>
+                                                            )
+                                                        }
+                                                        {/* <div className="subDes">Log in with your data that you entered during your registration.</div> */}
+                                                        <input
+                                                            type="email"
+                                                            placeholder="Enter your email "
+                                                            value={loginInfo.email}
+                                                            onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
+                                                            className="loginEmail"
+                                                        />
+                                                        {/* <div className="inputText">
+                                                    
+                                                </div> */}
+                                                        {/* <div className="inputGroup">
+                                                    <div className="label">E-mail</div>
+                                                    
+                                                </div> */}
+                                                        <input
+                                                            type={view ? "text" : "password"}
+                                                            placeholder="At least 8 characters"
+                                                            value={loginInfo.password}
+                                                            onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
+                                                            className="loginPassword"
+                                                        />
+                                                        {/* <div className="inputGroup">
+                                                    <div className="label">Password</div>
+                                                    <div className="inputText">
+                                                        
+                                                        <img src="/image/eye.png" alt="" onClick={() => setView(!view)} />
+                                                    </div>
+                                                </div> */}
+                                                        <div
+                                                            className="loginBtn"
+                                                            onClick={loginSlamWallet}
+                                                            // onClick={() => { setLoginSlamFlg(1) }}
+                                                        >Connect</div>
+                                                        <div className='loginfooter'>Don’t have an acсount yet? <div>Register</div></div>
+                                                    </div>
+                                                    :
+                                                    (loginSlamFlg == 1
+                                                        ?
+                                                       <div>
                                                             <img src="/image/Slam.png" alt="" />
                                                             <div className="subLoginTitle">Welcome back!</div>
                                                             <input
@@ -409,7 +473,6 @@ function Header(props) {
                                                                 onClick={loginSlamWallet}
                                                             >Connect</div>
                                                             <div className='loginfooter'>Don’t have an acсount yet? <div>Register</div></div>
-=======
                                                             <div className='username'>Alex</div>
                                                             <div className='address'>0x...a37V
                                                                 <CopyToClipboard text={"0x...a37V"}>
@@ -448,20 +511,11 @@ function Header(props) {
                                                             </div> */}
                                                             <div className='visitBtn'>Visit SlamWallet</div>
                                                             <div className='disconnectBtn' onClick={() => { setLoginSlamFlg(0) }}>Disconnect</div>
->>>>>>> 3233c218d551b446f9103657fdd7f327a9534eaa
                                                         </div>
-                                                    :
-                                                    <div>
-                                                        <div className='username'>{fullName}</div>
-                                                        {/* <div className='address'>{`0x...${walletAddress.slice(-4)}`}<img src="/image/copy.svg" alt="" /></div> */}
-                                                        <img className='slamIcon' src="/image/Slam.png" alt="" />
-                                                        <div className='slamAmount'>{balance} $SLM</div>
-                                                        <div className='money'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(balance * tokenPrice)}</div>
-                                                        <a href="https://slamwallet.floki-coin.io/" target="_blank" className='visitBtn'>Visit SlamWallet</a>
-                                                        <div className='disconnectBtn' onClick={disconnectSlam}>Disconnect</div>
-                                                    </div>
-                                            
-                                                }
+                                                        :
+                                                        <div></div>
+                                                    )
+                                                 }
 
                                             </div>
                                             :
@@ -480,7 +534,7 @@ function Header(props) {
                 </div>
             </div>
             <div className="menuBtnGroup">
-                <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
+                <img src="/image/menu.png" alt="" onClick={() => setShowMobileSidebar(true)} />
                 <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
             </div>
             {/* <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
