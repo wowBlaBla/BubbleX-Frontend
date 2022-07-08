@@ -34,6 +34,8 @@ const web3Modal = new Web3Modal({
 function Header(props) {
     const state = useSelector(store => store.wallet);
     const [fixedHeader, setFixedHeader] = useState(false);
+    const [isReserveClicked, setIsReserveClicked] = useState(props.isReserveClicked ? props.isReserveClicked : false);
+
     const { provider, web3Provider, address, chainId, slamWallet } = state;
     const dispatch = useDispatch();
 
@@ -382,7 +384,7 @@ function Header(props) {
                             </div>
                             <div className="homePanel collapse mobileVersion" id="marketplacePanel">
                                 <Link to="/Marketplace">Visit Marketplace</Link>
-                                <Link to="/Marketplace" onClick={() => props.setIsMate(true)}>Mate Characters</Link>
+                                <Link to="/Marketplace/sai" onClick={() => props.setIsMate(true)}>Mate Characters</Link>
                                 <Link to="/MyCharacters">Your Characters</Link>
                             </div>
                         </div>
@@ -451,28 +453,8 @@ function Header(props) {
                                                     :
                                                     (loginSlamFlg == 1
                                                         ?
-                                                       <div>
-                                                            <img src="/image/Slam.png" alt="" />
-                                                            <div className="subLoginTitle">Welcome back!</div>
-                                                            <input
-                                                                type="email"
-                                                                placeholder="Enter your email "
-                                                                value={loginInfo.email}
-                                                                onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
-                                                                className="loginEmail"
-                                                            />
-                                                            <input
-                                                                type={view ? "text" : "password"}
-                                                                placeholder="At least 8 characters"
-                                                                value={loginInfo.password}
-                                                                onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
-                                                                className="loginPassword"
-                                                            />
-                                                            <div
-                                                                className="loginBtn"
-                                                                onClick={loginSlamWallet}
-                                                            >Connect</div>
-                                                            <div className='loginfooter'>Don’t have an acсount yet? <div>Register</div></div>
+                                                       <div>                                                          
+
                                                             <div className='username'>Alex</div>
                                                             <div className='address'>0x...a37V
                                                                 <CopyToClipboard text={"0x...a37V"}>

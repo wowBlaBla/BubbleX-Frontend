@@ -2949,6 +2949,10 @@ body {
         display: none;
     }
 
+    .header .Toastify {
+        display: none;
+    }
+
     .header.mobileShow .mobileSidebar {
         z-index: 1041;
         width: 100%;
