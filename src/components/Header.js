@@ -370,22 +370,22 @@ function Header(props) {
                         </div>
                         <div className="menuGroup">
                             <div className="homeMenu" onMouseEnter={() => setShowMarketplaceHover(true)} onMouseLeave={() => setShowMarketplaceHover(false)}>
-                                <Link to="/Marketplace" className={props.selected == "Marketplace" ? "selected" : ""}
-                                >Marketplace</Link>
+                                <a href="/Marketplace" className={props.selected == "Marketplace" ? "selected" : ""}
+                                >Marketplace</a>
                                 <div data-toggle="collapse" href="#marketplacePanel" role="button" area-expanded="true" area-controls="marketplacePanel" className="collapsed"></div>
                                 {showMarketplaceHover ? <div className="homeHoverPanel desktopVersion">
                                     <div className="panel">
-                                        <Link to="/Marketplace">Visit Marketplace</Link>
-                                        <Link to="/Marketplace/sai" onClick={() => props.setIsMate(true)}>Mate Characters</Link>
-                                        <Link to="/MyCharacters">Your Characters</Link>
+                                        <a href="/Marketplace">Visit Marketplace</a>
+                                        <a href="/Marketplace/sai" onClick={() => props.setIsMate(true)}>Mate Characters</a>
+                                        <a href="/MyCharacters">Your Characters</a>
                                         <div className="uparrow"></div>
                                     </div>
                                 </div> : <></>}
                             </div>
                             <div className="homePanel collapse mobileVersion" id="marketplacePanel">
-                                <Link to="/Marketplace">Visit Marketplace</Link>
-                                <Link to="/Marketplace/sai" onClick={() => props.setIsMate(true)}>Mate Characters</Link>
-                                <Link to="/MyCharacters">Your Characters</Link>
+                                <a href="/Marketplace">Visit Marketplace</a>
+                                <a href="/Marketplace/sai" onClick={() => props.setIsMate(true)}>Mate Characters</a>
+                                <a href="/MyCharacters">Your Characters</a>
                             </div>
                         </div>
                         <div className="menuGroup">

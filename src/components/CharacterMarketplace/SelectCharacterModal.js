@@ -14,7 +14,7 @@ export default function SelectCharacterModal(props) {
             <Tabs>
                 <TabList>
                     <Tab>Characters</Tab>
-                    <Tab>Bubbles</Tab>
+                    <Tab>Marketplace</Tab>
                 </TabList>
                 <TabPanel>
                     <CustomToolbar />

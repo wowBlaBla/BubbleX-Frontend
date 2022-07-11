@@ -21,6 +21,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    padding: 5px 15px 5px 15px;
 }
 
 .CustomToolbar .priceRange .priceRangePanel {

@@ -45,7 +45,7 @@ export default function CustomToolbar() {
     }
     return (
         <div className="CustomToolbar">
-            <div className="priceRange"><div onClick={() => setShowPriceRangePanel(true)}>{priceRange == "" ? "$ Price range" : priceRange}</div>
+            <div className="priceRange"><div onClick={() => setShowPriceRangePanel(true)} style={{height:'100%',width:'100%', display: 'flex',alignItems: 'center'}}>{priceRange == "" ? "$ Price range" : priceRange}</div>
                 {showPriceRangePanel ? <div className="priceRangePanel" ref={priceRangeRef}>
                     <div className="valueGroup">
                         <div className="valueSelector">
