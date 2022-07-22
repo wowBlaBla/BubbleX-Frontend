@@ -14,7 +14,7 @@
     "axios": "^0.21.1",
     "calendar-base": "^1.1.1",
     "dotenv": "^10.0.0",
-    "ethers": "^5.5.2",
+    "ethers": "^5.6.9",
     "fortmatic": "^2.2.1",
     "history": "^5.0.0",
     "i18next": "^21.3.3",

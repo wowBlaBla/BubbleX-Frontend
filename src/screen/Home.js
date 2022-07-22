@@ -7,13 +7,16 @@ import { Carousel } from "react-responsive-carousel";
 import VideoPlayModal from "../components/VideoPlayModal";
 import Modal from 'react-bootstrap/Modal';
 import Web3 from "web3";
+import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { connect, useSelector, useDispatch } from 'react-redux'
 //import { useWeb3Contracts } from "../web3/contracts";
 import BubblexABI from '../contract/BubbleX.json';
+import SlamABI from '../contract/SlamToken.json';
 import { Toast } from "react-bootstrap";
+import { setUserBnbBalance } from "../actions/projectSetting";
 
 
 export default function Home() {
@@ -22,11 +25,16 @@ export default function Home() {
     const [randomCount, setRandomCount] = useState(1);
     const [epicCount, setEpicCount] = useState(1);
     const [legendaryCount, setLegendaryCount] = useState(1);
+    const [nowSelect, setNowSelect] = useState(0);
+    const [itemValue, setItemValue] = useState(0);
+    const [itemCount, setItemCount] = useState(1);
+    const [userBalance, setBNBBalance] = useState(0);
     const [showVideo, setShowVideo] = useState(false);
     const [showVideo1, setShowVideo1] = useState(false);
     const [showVideoPlayModal, setShowVideoPlayModal] = useState(false);
     const [showFaqMore, setShowFaqMore] = useState(false);
     const [isReserveClicked, setIsReserveClicked] = useState(false);
+    const [recentTx, setRecentTx] = useState();
     const videoRef = useRef(null);
     const [scrollY, setScrollY] = useState(window.scrollY);
     const [smShow, setSmShow] = useState(false);
@@ -38,7 +46,6 @@ export default function Home() {
     useEffect(() => {
         setScrollY(window.scrollY);
     }, []);
-
     // useEffect(() => {
     //     window.addEventListener("scroll", (e) => {
     //         console.log(videoRef);
@@ -72,9 +79,15 @@ export default function Home() {
             setSliderBackground({ background: "linear-gradient(to right, #FF79FF " + (parseFloat(event.target.value) - parseFloat(event.target.min)) / (parseFloat(event.target.max) - parseFloat(event.target.min)) * 100 + "%, #EEEEEE " + (parseFloat(event.target.value) - parseFloat(event.target.min)) / (parseFloat(event.target.max) - parseFloat(event.target.min)) * 100 + "%)" })
     }
 
-    const onSetRandomReverse = async (iCount) => {
-        // if (iCount == 0) return;
+    const buyWithSlam = () => {
+        
+    }
 
+    const onSetRandomReverse = async (iCount) => {
+        setItemCount(iCount);
+        setNowSelect(0);
+        if (iCount == 0) return;
+        const rVal = 5;
         // Check the Coin Network
         // if (chainID != 4) {
             // alert("Please choose the Ethereum Mainnet");
@@ -84,13 +97,35 @@ export default function Home() {
 
         if (wallet.address == null) {
             // alert('Please connect wallet firstly');
-            toast.warn("Please Connect Wallet!");
-            window.scrollTo(0, 0)
+            toast.warn("Please Connect Wallet!", {pauseOnFocusLoss: false});
             return;
-        } else {
-            setSmShow(true);
         }
-        return;
+
+        if(wallet.web3Provider != null && chainID != 97){
+            toast.error("Please Change Network to BSC Testnet", {pauseOnFocusLoss: false});
+            return;
+        }
+
+        if(wallet.slamWallet == null) {
+            const web3 = new Web3(wallet.provider);
+            const contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEX_CONTRACT_ADDRESS);
+            const amount = iCount * 0.1;
+            const result = await contract.methods.mintWithBNB(wallet.address, iCount, 0).send({
+                from: wallet.address,
+                value: web3.utils.toWei('' + amount)
+            }).catch(err => {
+                toast.error(err.message, {pauseOnFocusLoss: false});
+            })
+            if(result?.blockHash) {
+                toast.success("Successfully Minted!", {pauseOnFocusLoss: false});
+            }
+        } else {
+            setItemValue(iCount * rVal);
+            setIsReserveClicked(true);
+            const web3 = new Web3(process.env.REACT_APP_BSC);
+            const bnbBalance = await web3.eth.getBalance(wallet.address);
+            setBNBBalance(web3.utils.fromWei(bnbBalance, 'ether'));
+        }
         // try {
             // Get network provider and web3 instance.
             // const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -167,8 +202,10 @@ export default function Home() {
     }
 
     const onSetEpicReverse = async (iCount) => {
-        // if (iCount == 0) return;
-
+        setNowSelect(1);
+        setItemCount(iCount);
+        if (iCount == 0) return;
+        const rVal = 15;
         // Check the Coin Network
         // if (chainID != 4) {
         //     // alert("Please choose the Ethereum Mainnet");
@@ -176,13 +213,37 @@ export default function Home() {
         //     return;
         // }
         if (wallet.address == null) {
-            toast.warn("Please Connect Wallet!");
-            window.scrollTo(0, 0)
+            // alert('Please connect wallet firstly');
+            toast.warn("Please Connect Wallet!", {pauseOnFocusLoss: false});
             return;
-        } else {
-            setSmShow(true);
         }
-        return;
+
+        if(wallet.web3Provider != null && chainID != 97){
+            toast.error("Please Change Network to BSC Testnet", {pauseOnFocusLoss: false});
+            return;
+        }
+
+        if(wallet.slamWallet == null) {
+            const web3 = new Web3(wallet.provider);
+            const contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEX_CONTRACT_ADDRESS);
+            const amount = iCount * 1;
+            const result = await contract.methods.mintWithBNB(wallet.address, iCount, 1).send({
+                from: wallet.address,
+                value: web3.utils.toWei('' + amount)
+            }).catch(err => {
+                toast.error(err.message, {pauseOnFocusLoss: false});
+            })
+
+            if(result?.blockHash) {
+                toast.success("Successfully Minted!", {pauseOnFocusLoss: false});
+            }
+        } else {
+            setItemValue(iCount * rVal);
+            setIsReserveClicked(true);
+            const web3 = new Web3(process.env.REACT_APP_BSC);
+            const bnbBalance = await web3.eth.getBalance(wallet.address);
+            setBNBBalance(web3.utils.fromWei(bnbBalance, 'ether'));
+        }
         // try {
             // Get network provider and web3 instance.
             // const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -234,8 +295,10 @@ export default function Home() {
     }
 
     const onSetLegendaryReverse = async (iCount) => {
-        // if (iCount == 0) return;
-
+        setNowSelect(2);
+        setItemCount(iCount);
+        if (iCount == 0) return;
+        const rVal = 25;
         // Check the Coin Network
         // if (chainID != 4) {
             // alert("Please choose the Ethereum Mainnet");
@@ -243,13 +306,37 @@ export default function Home() {
             // return;
         // }
         if (wallet.address == null) {
-            toast.warn("Please Connect Wallet!");
-            window.scrollTo(0, 0)
+            // alert('Please connect wallet firstly');
+            toast.warn("Please Connect Wallet!", {pauseOnFocusLoss: false});
             return;
-        } else {
-            setSmShow(true);
         }
-        return;
+
+        if(wallet.web3Provider != null && chainID != 97){
+            toast.error("Please Change Network to BSC Testnet", {pauseOnFocusLoss: false});
+            return;
+        }
+
+        if(wallet.slamWallet == null) {
+            const web3 = new Web3(wallet.provider);
+            const contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEX_CONTRACT_ADDRESS);
+            const amount = iCount * 5;
+            const result = await contract.methods.mintWithBNB(wallet.address, iCount, 2).send({
+                from: wallet.address,
+                value: web3.utils.toWei('' + amount)
+            }).catch(err => {
+                toast.error(err.message, {pauseOnFocusLoss: false});
+            })
+
+            if(result?.blockHash) {
+                toast.success("Successfully Minted!", {pauseOnFocusLoss: false});
+            }
+        } else {
+            setItemValue(iCount * rVal);
+            setIsReserveClicked(true);
+            const web3 = new Web3(process.env.REACT_APP_BSC);
+            const bnbBalance = await web3.eth.getBalance(wallet.address);
+            setBNBBalance(web3.utils.fromWei(bnbBalance, 'ether'));
+        }
         // try {
             // Get network provider and web3 instance.
             // const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -306,12 +393,95 @@ export default function Home() {
         setIsReserveClicked(false);
     }
 
+    const buyAction = async () => {
+        removeReserveClicked();
+        const toastPending = toast.loading("1 transaction is pending....");
+        const web3 = new Web3(process.env.REACT_APP_BSC);
+        console.log(web3);
+        const tokenContract = new web3.eth.Contract(SlamABI, process.env.REACT_APP_SLAMTOKEN);
+        const BubbleContract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEX_CONTRACT_ADDRESS);
+        const result = await tokenContract.methods.balanceOf(wallet.address).call();
+        const balance = web3.utils.fromWei(result, 'ether');
+        if(balance * 1 < itemValue) {
+            toast.update(toastPending, {render: "Insufficient SLAM TOKEN", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+            return;
+        }
+        const approveAmount = web3.utils.toWei(itemValue + '');
+        const approveTx = tokenContract.methods.approve(process.env.REACT_APP_BUBBLEX_CONTRACT_ADDRESS, approveAmount);
+        const gas = await approveTx.estimateGas({from: wallet.address});
+        const gasPrice = await web3.eth.getGasPrice();
+        // const gasFee = web3.utils.fromWei(gas * gasPrice + '', 'ether');
+        const txData = {
+            to: approveTx._parent._address,
+            data: approveTx.encodeABI(),
+            gas: gas,
+            gasPrice: gasPrice
+        };
+        const signedTx = await web3.eth.accounts.signTransaction(txData, wallet.slamWallet);
+        await web3.eth.sendSignedTransaction(signedTx.rawTransaction).catch(err => {
+            toast.update(toastPending, {render: "Insufficient BNB Balance For gas fee. You have to deposit some BNB to SlamWallet Address.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+        });
+        const finalTx = BubbleContract.methods.mintWithSLAM(wallet.address, itemCount, nowSelect);
+        const finalGas = await finalTx.estimateGas({from: wallet.address});
+        const finalTxData = {
+            to: finalTx._parent._address,
+            data: finalTx.encodeABI(),
+            gas: finalGas,
+            gasPrice: gasPrice
+        }
+        const finalSignedTx = await web3.eth.accounts.signTransaction(finalTxData, wallet.slamWallet);
+        const finalResult = await web3.eth.sendSignedTransaction(finalSignedTx.rawTransaction).catch(err => {
+            toast.update(toastPending, {render: "Insufficient BNB Balance For gas fee. You have to deposit some BNB to SlamWallet Address.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+        });
+        if(finalResult) {
+            axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/cryptoTx', {
+                token: wallet.token, user_id: wallet.userId, amount: itemValue * -1, transactionHash: finalResult.transactionHash, txType: 2, isNFT: '0x' + itemCount + nowSelect
+            }).then(res => {
+                if(res.data.status === 'success') {
+                    toast.update(toastPending, {render: "Successfully Minted.", type: "success", isLoading: false, autoClose: 3000, className: 'rotateY animated', closeButton: true, pauseOnFocusLoss: false});
+                } else {
+                    toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+                }
+                getTransactionHis();
+            }).catch(err => {
+                toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+            })
+        } else {
+            toast.update(toastPending, {render: "Failed Mint.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+        }
+    }
+
+    const getTransactionHis = async () => {
+        const res = await axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/transaction', {token: wallet.token});
+        const titleArr = ['Random', 'Epic', 'Legend'];
+        const priceArr = [5, 15, 25];
+        let getResult = [];
+        res.data.transactions.map((row, i) => {
+            if(row.isNFT?.length > 2) {
+                getResult.push({
+                    amount: row.isNFT.substr(2, 1) * priceArr[Number(row.isNFT.substr(3, 1))],
+                    title: titleArr[Number(row.isNFT.substr(3, 1))],
+                    txhash: "https://testnet.bscscan.com/tx/" + row.txhash,
+                    createDate: row.created_at
+                });
+            }
+        });
+        setRecentTx(getResult);
+    }
 
     return (
         <div className="HomeScreen">
             <div className="top">
                 <div className="background">
-                    <Header selected="Home" isReserveClicked = {isReserveClicked} removeReserveClicked = {removeReserveClicked}/>
+                    <Header 
+                        selected="Home" 
+                        isReserveClicked = {isReserveClicked} 
+                        removeReserveClicked = {removeReserveClicked} 
+                        buyAction = {buyAction}
+                        iValue={itemValue} 
+                        bnbBalance = {userBalance}
+                        updateTx = {recentTx}
+                    />
                     <div className="top_main">
                         <div className="top_content">
                             <div className="content_title">Collect and earn on <font color="#216AF5">NFT<img src="/image/top_img1.png" /></font> bubbles</div>
@@ -1620,28 +1790,6 @@ export default function Home() {
                 <VideoPlayModal isShow={showVideoPlayModal} hideModal={onSetShowVideoPlayModal} />
             </div>
             <Footer />
-            <Modal
-                size="sm"
-                show={smShow}
-                onHide={() => setSmShow(false)}
-                aria-labelledby="example-modal-sizes-title-sm"
-            >
-                <Modal.Header>
-                <Modal.Title id="example-modal-sizes-title-sm">
-                    <div className="ethValue">BUY WITH:</div>
-                </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="optionContainer">
-                        <div className="imgWrap" onClick={() => {alert("Insufficient Funds...")}}>
-                            <img src="/image/bnb.png" />
-                        </div>
-                        <div className="imgWrap" onClick={() => {alert("Insufficient Funds...")}}>
-                            <img src="/image/Slam.png" />
-                        </div>
-                    </div>
-                </Modal.Body>
-            </Modal>
         </div >
     );
 }

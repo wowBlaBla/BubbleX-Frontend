@@ -5,6 +5,8 @@ const initialState = {
     address: null,
     chainId: null,
     slamWallet: null,
+    token: null,
+    userId: null
 };
 
 export function walletReducer(state = initialState, action) {
@@ -34,6 +36,8 @@ export function walletReducer(state = initialState, action) {
                 ...state,
                 address: action.address,
                 slamWallet: action.slamWallet,
+                token: action.token,
+                userId: action.userId
             }
         default:
             return state;

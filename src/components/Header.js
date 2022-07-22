@@ -50,6 +50,7 @@ function Header(props) {
     const [walletAddress, setWalletAddress] = useState('');
     const [fullName, setFullName] = useState('');
     const [balance, setBalance] = useState(0);
+    const [recentTx, setRecentTx] = useState(false);
     const [loginInfo, setLoginInfo] = useState({
         email: '',
         password: ''
@@ -97,8 +98,7 @@ function Header(props) {
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
-        const isConnected = localStorage.getItem("walletAddress") ? true : false;
-
+        const isConnected = localStorage.getItem("walletAddress")?.length > 32 ? true : false;
         if (isConnected) {
             walletConnect();
         }
@@ -159,12 +159,12 @@ function Header(props) {
                 alert()
                 await provider.disconnect();
                 //history.push('/');
-                setWalletAddress('');
+                setWalletAddress(null);
             }
             dispatch({
                 type: "RESET_WEB3_PROVIDER",
             });
-            localStorage.setItem('walletAddress', 0);
+            localStorage.setItem('walletAddress', null);
 
 
         },
@@ -181,15 +181,13 @@ function Header(props) {
             await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/signin`, loginInfo).then(res => {
                 const { token, status, message } = res.data;
                 if (status == 'error') {
-                    toast.error(message);
+                    toast.error(message, {pauseOnFocusLoss: false});
                     setLoginSlamFlg(0);
                 } else setErrorMsg('');
                 if (status == 'success') _token = { token };
             }).catch(error1 => {
                 
             });
-
-            console.log("test => ", _token)
 
             if (_token) {
                 await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
@@ -208,25 +206,45 @@ function Header(props) {
                         dispatch({ 
                             type: 'SLAMWALLET_CONNECT',
                             address: _wallet,
-                            slamWallet: res.data.guid
+                            slamWallet: res.data.guid,
+                            token: _token.token,
+                            userId: res.data.id
                         })
-                        toast.success('Successfully Connected!');
+                        toast.success('Successfully Connected!', {pauseOnFocusLoss: false});
                     } else {
                         setLoginSlamFlg(0);
                         dispatch({
                             type: "RESET_WEB3_PROVIDER",
                         });
                     }
-
                 }).catch(err1 => {
                     setLoginSlamFlg(0);
-                })
+                });
+                const res = await axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/transaction', _token);
+                const titleArr = ['Random', 'Epic', 'Legend'];
+                const priceArr = [5, 15, 25];
+                let getResult = [];
+                res.data.transactions.map((row, i) => {
+                    if(row.isNFT?.length > 2) {
+                        getResult.push({
+                            amount: row.isNFT.substr(2, 1) * priceArr[Number(row.isNFT.substr(3, 1))],
+                            title: titleArr[Number(row.isNFT.substr(3, 1))],
+                            txhash: "https://testnet.bscscan.com/tx/" + row.txhash,
+                            createDate: row.created_at
+                        });
+                    }
+                });
+                setRecentTx(getResult);
             }
         } catch (err) {
             console.log(err);
         }
         setLoadingStatus(0);
     }
+
+    useEffect(() => {
+        setRecentTx(props.updateTx);
+    }, [props.updateTx]);
 
     const disconnectSlam = async () => {
         setLoginSlamFlg(0); 
@@ -282,17 +300,21 @@ function Header(props) {
 
     }, [provider]);
 
+    useEffect(() => {
+        if(props.isReserveClicked) setOpenModal(true);
+    }, [props.isReserveClicked]);
+
     return (
         <div className={"header " + (showMobileSidebar ? "mobileShow" : "") + (fixedHeader ? " fixedHeader" : "") + (props.isReserveClicked ? " isReserved" : "")}>
-            {
+            {/* {
                 props.isReserveClicked ?
                     <div className="LoginModal">
                         <img src="/image/close1.png" className='close' onClick={() => props.removeReserveClicked()} />
                         <div>
-                            <div className='username'>Alex</div>
-                            <div className='address'>0x...a37V
-                                <CopyToClipboard text="0x...a37V">
-                                    <img src="../image/copy.svg" alt="" className="icon_copy" onClick={() => onClickCopyBtn("0x...a37V")} />
+                            <div className='username'>{fullName ? fullName : 'No Slam Name'}</div>
+                            <div className='address'>{walletAddress.substr(0, 6) + '...' + walletAddress.substr(-4)}
+                                <CopyToClipboard text={walletAddress}>
+                                    <img src="../image/copy.svg" alt="" className="icon_copy" onClick={() => onClickCopyBtn(walletAddress)} />
                                 </CopyToClipboard>
                             </div>
                             {(showCopied) ? <div className="sc-1u1vgpp-0 cVGhIP">
@@ -302,14 +324,14 @@ function Header(props) {
                                 <span>Copied!</span>
                             </div> : ""}
                             <img className='slamIcon' src="/image/slam.svg" />
-                            <div className='slamAmount'>13.123 $SLM</div>
-                            <div className='money'>$15.23 USD</div>
+                            <div className='slamAmount'>{balance} $SLM</div>
+                            <div className='money'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(balance * tokenPrice)}</div>
                             <div className='slamdetail-panel'>
                                 <div className='Operation-title'><img src="/image/operation.svg" />Operation Cost</div>
                                 <div className='content-panel'>
                                     <div className='content-title'>Your operations costs<br /> (without transaction fee).</div>
                                     <div className='content-detail'>
-                                        <div className='slamValue'>5 $SLM</div>
+                                        <div className='slamValue'>{props.iValue} $SLM</div>
                                         <div className='realValue'>$5.00</div>
                                     </div>
                                 </div>
@@ -330,7 +352,7 @@ function Header(props) {
                         </div>
                     </div>
                     : <></>
-            }
+            } */}
             <div className="header_logo">
                 <Link to="/"><img src="/image/header_logo.svg" alt="" /></Link>
                 <Link to="/"><img src="/image/footer_logo.svg" alt="" /></Link>
@@ -402,10 +424,11 @@ function Header(props) {
                                         <div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect" : "Connected" } SlamWallet</div>
                                         {isOpen ?
                                             <div className="LoginModal">
-                                                <img src="/image/close1.png" className='close' onClick={() => setOpenModal(false)} />
+                                                {loadingStatus == 0 ? "" : <div className="loadingIcon"></div>}
+                                                <img src="/image/close1.png" className='close' onClick={() => {setOpenModal(false); props.removeReserveClicked();}} />
                                                 {loginSlamFlg == 0 ?
                                                     <div>
-                                                        <img src="/image/slam.svg" />
+                                                        <img src="/image/slam.png" />
                                                         <div className="subLoginTitle">Welcome back!</div>
                                                         {
                                                             errMsg && (
@@ -448,17 +471,16 @@ function Header(props) {
                                                             onClick={loginSlamWallet}
                                                             // onClick={() => { setLoginSlamFlg(1) }}
                                                         >Connect</div>
-                                                        <div className='loginfooter'>Don’t have an acсount yet? <div>Register</div></div>
+                                                        <div className='loginfooter'>Don’t have an acсount yet? <a href="https://wallet.slamcoin.io/register" target="_blank" rel="noreferrer">Register</a></div>
                                                     </div>
                                                     :
                                                     (loginSlamFlg == 1
                                                         ?
-                                                       <div>                                                          
-
-                                                            <div className='username'>Alex</div>
-                                                            <div className='address'>0x...a37V
-                                                                <CopyToClipboard text={"0x...a37V"}>
-                                                                    <img src="../image/copy.svg" alt="" className="icon_copy" onClick={() => onClickCopyBtn("0x...a37V")} />
+                                                       <div>
+                                                            <div className='username'>{fullName ? fullName : 'No Slam Name'}</div>
+                                                            <div className='address'>{walletAddress.substr(0, 6) + '...' + walletAddress.substr(-4)}
+                                                                <CopyToClipboard text={walletAddress}>
+                                                                    <img src="../image/copy.svg" alt="" className="icon_copy" onClick={() => onClickCopyBtn(walletAddress)} />
                                                                 </CopyToClipboard></div>
                                                             {(showCopied) ? <div className="sc-1u1vgpp-0 cVGhIP">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="14px" width="14px" viewBox="0 0 24 24" className="sc-16r8icm-0 cfMRaw cmc-icon">
@@ -466,33 +488,65 @@ function Header(props) {
                                                                 </svg>
                                                                 <span>Copied!</span>
                                                             </div> : ""}
-
-                                                            <img className='slamIcon' src="/image/slam.svg" />
-                                                            <div className='slamAmount'>13.123 $SLM</div>
-                                                            <div className='money'>$15.23 USD</div>
-                                                            {/* <div className='slamdetail-panel'>
-                                                                <div className='Operation-title'><img src="/image/operation.svg" />Operation Cost</div>
-                                                                <div className='content-panel'>
-                                                                    <div className='content-title'>Your operations costs<br /> (without transaction fee).</div>
-                                                                    <div className='content-detail'>
-                                                                        <div className='slamValue'>5 $SLM</div>
-                                                                        <div className='realValue'>$5.00</div>
+                                                            <img className='slamIcon' src="/image/slam.png" />
+                                                            <div className='slamAmount'>{balance} $SLM</div>
+                                                            <div className='money'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(balance * tokenPrice)}</div>
+                                                            {
+                                                                props.isReserveClicked ? 
+                                                                <>
+                                                                    <div className='slamdetail-panel'>
+                                                                        <div className='Operation-title'><img src="/image/operation.svg" />Operation Cost</div>
+                                                                        <div className='content-panel'>
+                                                                            <div className='content-title'>Your operations costs<br /> (without transaction fee).</div>
+                                                                            <div className='content-detail'>
+                                                                                <div className='slamValue'>{props.iValue} $SLM</div>
+                                                                                <div className='realValue'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(props.iValue * tokenPrice)}</div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
 
-                                                            <div className='slamdetail-panel'>
-                                                                <div className='Operation-title'><img src="/image/gas.svg" />Gas fee</div>
-                                                                <div className='content-panel'>
-                                                                    <div className='content-title'>For this operation you<br/> should pay gas fee.</div>
-                                                                    <div className='content-detail'>
-                                                                        <div className='slamValue'>0.005 $SLM</div>
-                                                                        <div className='realValue'>$0.005</div>
+                                                                    <div className='slamdetail-panel'>
+                                                                        <div className='Operation-title'><img src="/image/gas.svg" />BNB Balance</div>
+                                                                        <div className='content-panel'>
+                                                                            <div className='content-title'>For this operation you <br /> should pay gas fee with BNB.</div>
+                                                                            <div className='content-detail'>
+                                                                                <div className='slamValue'>{props.bnbBalance ? props.bnbBalance : '...'} BNB</div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div> */}
-                                                            <div className='visitBtn'>Visit SlamWallet</div>
-                                                            <div className='disconnectBtn' onClick={() => { setLoginSlamFlg(0) }}>Disconnect</div>
+
+                                                                    <div className='visitBtn' onClick={() => props.buyAction()}>Accept and Buy</div>
+                                                                    <div className='disconnectBtn' onClick={() => props.removeReserveClicked()}>Cancel</div>
+                                                                </>
+                                                                : 
+                                                                <>
+                                                                    <div className='slamdetail-panel'>
+                                                                        <div className='Operation-title'><img src="/image/gas.svg" />Recent Transactions</div>
+                                                                        
+                                                                            {
+                                                                                recentTx && (
+                                                                                    recentTx.length === 0 ?
+                                                                                        <div>You don't have recent history transaction.</div>
+                                                                                    :
+                                                                                    recentTx.map((row, i) => {
+                                                                                        return (
+                                                                                            <div className='content-panel' key={i}>
+                                                                                                <div className='content-title'>Buy {row.title} BubbleX <br /> {row.createDate} </div>
+                                                                                                <div className='content-detail'>
+                                                                                                    <div className='slamValue'>{row['amount']} $SLM</div>
+                                                                                                    <div className='realValue'><a href={row.txhash} target="_blank">View Trnasaction</a></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        );
+                                                                                    })
+                                                                                )
+                                                                            }
+                                                                        
+                                                                    </div>
+                                                                    <a href="https://wallet.slamcoin.io" target="_blank" className='visitBtn'>Visit SlamWallet</a>
+                                                                    <div className='disconnectBtn' onClick={() => { setLoginSlamFlg(0) }}>Disconnect</div>
+                                                                </>
+                                                            }
                                                         </div>
                                                         :
                                                         <div></div>
@@ -519,9 +573,6 @@ function Header(props) {
                 <img src="/image/menu.png" alt="" onClick={() => setShowMobileSidebar(true)} />
                 <img src="/image/menu1.png" alt="" onClick={() => setShowMobileSidebar(true)} />
             </div>
-            {/* <Modal show={isOpen} className="SlamWallet" onHide={handleClose}>
-
-            </Modal> */}
             <ToastContainer></ToastContainer>
         </div>
     )
