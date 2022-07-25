@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
-import CustomToolbar from '../CustomToolbar';
+import CustomToolbar from '../CustomToolbar/CustomToolbar';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import "../../screen/CustomTab.css";
 import "./SelectCharacterModal.css";

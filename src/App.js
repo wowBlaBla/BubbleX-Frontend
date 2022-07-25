@@ -6,9 +6,9 @@ import CharacterMarketplace from './screen/CharacterMarketplace';
 import MyCharacters from "./screen/MyCharacters";
 
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
+	BrowserRouter as Router,
+	Switch,
+	Route,
 } from "react-router-dom";
 
 // Redux
@@ -18,21 +18,21 @@ import store from './store';
 
 function App() {
 
-  return (
-    <Provider store={store}>
-      <React.Fragment>
-        <Router>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/ReservedBubbleX" component={ReservedBubbleX} />
-            <Route exact path="/Marketplace" component={Marketplace} />
-            <Route exact path="/Marketplace/Sai" component={CharacterMarketplace} />
-            <Route exact path="/MyCharacters" component={MyCharacters} />
-          </Switch>
-        </Router>
-      </React.Fragment>
-    </Provider>
-  );
+	return (
+		<Provider store={store}>
+			<React.Fragment>
+				<Router>
+					<Switch>
+						<Route exact path="/" component={Home} />
+						<Route exact path="/ReservedBubbleX" component={ReservedBubbleX} />
+						<Route exact path="/Marketplace" component={Marketplace} />
+						<Route exact path="/Marketplace/Sai" component={CharacterMarketplace} />
+						<Route exact path="/MyCharacters" component={MyCharacters} />
+					</Switch>
+				</Router>
+			</React.Fragment>
+		</Provider>
+	);
 }
 
 export default App;

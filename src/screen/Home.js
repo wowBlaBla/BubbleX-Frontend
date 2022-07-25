@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+import Footer from "../components/Footer/Footer";
+import Header from "../components/Header/Header";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
-import VideoPlayModal from "../components/VideoPlayModal";
+import VideoPlayModal from "../components/VideoPlayModal/VideoPlayModal";
 import Modal from 'react-bootstrap/Modal';
 import Web3 from "web3";
 import axios from "axios";
@@ -43,6 +43,7 @@ export default function Home() {
     const userAddress = useSelector(store => store.wallet.address);
     const chainID = useSelector(store => store.wallet.chainId);
     const wallet = useSelector(store => store.wallet);
+    console.log(wallet);
     useEffect(() => {
         setScrollY(window.scrollY);
     }, []);
