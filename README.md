@@ -1,4 +1,4 @@
-# SlamCoin Wallet
+# BubbleX Frontend
 
 ## Available Scripts
 
