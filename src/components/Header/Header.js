@@ -6,15 +6,15 @@ import PropTypes from 'prop-types'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Web3Lib from 'web3';
 import Web3Modal from "web3modal";
 import { providers } from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { Alert, Modal } from 'react-bootstrap';
+// import { Alert, Modal } from 'react-bootstrap';
 import axios from 'axios';
-import { CopyToClipboard } from 'react-copy-to-clipboard'
+// import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Foco from 'react-foco';
 import { User_Address, Injected_Wallet } from '../../actions/types';
+import SlamWallet from '../SlamWallet/SlamWallet';
 
 const providerOptions = {
 	walletconnect: {
@@ -60,11 +60,10 @@ function Header(props) {
 	const [tokenPrice, setTokenPrice] = useState(0.18);
 	const [loadingStatus, setLoadingStatus] = useState(0);
 
+	const [showCopied, setShowCopied] = useState(false);
+	
 	const handleClose = () => setOpenModal(false);
 
-
-	//const { provider, web3, address, chainId } = useState();
-	const [showCopied, setShowCopied] = useState(false)
 	const onClickCopyBtn = (text) => {
 		console.log("Copy Test ==> ", text);
 		addressCopy(text)
@@ -89,13 +88,6 @@ function Header(props) {
 		}
 	}, [showCopied]);
 
-	// useEffect(() => {
-	//     const isConnected = localStorage.getItem("walletAddress").length > 40 ? true : false;
-	//     if (isConnected) {
-	//         walletConnect();
-	//     }
-	// }, [])
-
 	useEffect(() => {
 		window.addEventListener('scroll', handleScroll);
 		const isConnected = localStorage.getItem("walletAddress")?.length > 32 ? true : false;
@@ -118,17 +110,13 @@ function Header(props) {
 	const walletConnect = useCallback(async () => {
 		try {
 			const provider = await web3Modal.connect();
-			//web3 = new Web3Lib(provider);
 			const web3Provider = new providers.Web3Provider(provider);
 			
 			const network = await web3Provider.getNetwork();
-			//const accounts = await web3.eth.getAccounts();
 
 			const signer = web3Provider.getSigner();
 			const address = await signer.getAddress();
 			setWalletAddress(address);
-			// setWalletAddress(accounts[0]);
-
 
 			dispatch({ type: 'User_Address', payload: address })
 
@@ -150,10 +138,6 @@ function Header(props) {
 
 	const disconnectWallet = useCallback(
 		async function () {
-
-			// if (web3 && web3.currentProvider && web3.currentProvider.close) {
-			//     await web3.currentProvider.close();
-			// }
 			await web3Modal.clearCachedProvider();
 			if (provider?.disconnect && typeof provider.disconnect === "function") {
 				alert()
@@ -161,12 +145,12 @@ function Header(props) {
 				//history.push('/');
 				setWalletAddress(null);
 			}
+
 			dispatch({
 				type: "RESET_WEB3_PROVIDER",
 			});
+
 			localStorage.setItem('walletAddress', null);
-
-
 		},
 		[provider]
 	);
@@ -188,6 +172,8 @@ function Header(props) {
 			}).catch(error1 => {
 				
 			});
+
+			console.log(process.env);
 
 			if (_token) {
 				await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
@@ -229,7 +215,7 @@ function Header(props) {
 						getResult.push({
 							amount: row.isNFT.substr(2, 1) * priceArr[Number(row.isNFT.substr(3, 1))],
 							title: titleArr[Number(row.isNFT.substr(3, 1))],
-							txhash: "https://testnet.bscscan.com/tx/" + row.txhash,
+							txhash: `${process.env.REACT_APP_BLOCK_EXPLORER_BASEURL}/${row.txhash}`,
 							createDate: row.created_at
 						});
 					}
@@ -261,8 +247,6 @@ function Header(props) {
 		if (provider?.on) {
 
 			const handleAccountsChanged = (accounts) => {
-				// eslint-disable-next-line no-console
-				// console.log("accountsChanged", accounts);
 				dispatch({
 					type: "SET_ADDRESS",
 					address: accounts[0],
@@ -270,8 +254,6 @@ function Header(props) {
 			};
 
 			const handleChainChanged = (chain) => {
-				// eslint-disable-next-line no-console
-				// console.log("accountsChanged--->", chain);
 				dispatch({
 					type: "SET_CHAIN_ID",
 					chainId: chain,
@@ -281,7 +263,6 @@ function Header(props) {
 			const handleDisconnect = (error) => {
 				// eslint-disable-next-line no-console
 				//disconnect();
-
 			};
 
 			provider.on("accountsChanged", handleAccountsChanged);
@@ -293,7 +274,6 @@ function Header(props) {
 				if (provider.removeListener) {
 					provider.removeListener("accountsChanged", handleAccountsChanged);
 					provider.removeListener("chainChanged", handleChainChanged);
-					//provider.removeListener("disconnect",);
 				}
 			};
 		}
@@ -303,6 +283,25 @@ function Header(props) {
 	useEffect(() => {
 		if(props.isReserveClicked) setOpenModal(true);
 	}, [props.isReserveClicked]);
+
+	const stateForSlamWallet = {
+		loadingStatus,
+		setOpenModal,
+		loginSlamFlg,
+		errMsg,
+		loginInfo,
+		setLoginInfo,
+		view,
+		loginSlamWallet,
+		fullName,
+		walletAddress,
+		onClickCopyBtn,
+		showCopied,
+		balance,
+		tokenPrice,
+		recentTx,
+		disconnectSlam
+	}
 
 	return (
 		<div className={"header " + (showMobileSidebar ? "mobileShow" : "") + (fixedHeader ? " fixedHeader" : "") + (props.isReserveClicked ? " isReserved" : "")}>
@@ -426,116 +425,7 @@ function Header(props) {
 											<Foco 
 												onClickOutside={() => {setOpenModal(false); props.removeReserveClicked();}}
 											>
-												<div className="LoginModal">
-													{loadingStatus == 0 ? "" : <div className="loadingIcon"></div>}
-													<img src="/image/close1.png" className='close' onClick={() => {setOpenModal(false); props.removeReserveClicked();}} />
-													{loginSlamFlg == 0 ?
-														<div>
-															<img src="/image/slam.png" />
-															<div className="subLoginTitle">Welcome back!</div>
-															{
-																errMsg && (
-																	<Alert variant="danger">
-																		<p>{errMsg}</p>
-																	</Alert>
-																)
-															}
-															<input
-																type="email"
-																placeholder="Enter your email "
-																value={loginInfo.email}
-																onChange={(e) => setLoginInfo({ ...loginInfo, email: e.target.value })}
-																className="loginEmail"
-															/>
-															<input
-																type={view ? "text" : "password"}
-																placeholder="At least 8 characters"
-																value={loginInfo.password}
-																onChange={(e) => setLoginInfo({ ...loginInfo, password: e.target.value })}
-																className="loginPassword"
-															/>
-															<div
-																className="loginBtn"
-																onClick={loginSlamWallet}
-																// onClick={() => { setLoginSlamFlg(1) }}
-															>Connect</div>
-															<div className='loginfooter'>Don’t have an acсount yet? <a href="https://wallet.slamcoin.io/register" target="_blank" rel="noreferrer">Register</a></div>
-														</div>
-														:
-													  <div>
-															<div className='username'>{fullName ? fullName : 'No Slam Name'}</div>
-															<div className='address'>{walletAddress.substr(0, 6) + '...' + walletAddress.substr(-4)}
-																<CopyToClipboard text={walletAddress}>
-																	<img src="../image/copy.svg" alt="" className="icon_copy" onClick={() => onClickCopyBtn(walletAddress)} />
-																</CopyToClipboard></div>
-															{(showCopied) ? <div className="sc-1u1vgpp-0 cVGhIP">
-																<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="14px" width="14px" viewBox="0 0 24 24" className="sc-16r8icm-0 cfMRaw cmc-icon">
-																	<path fillRule="evenodd" clipRule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM16.7557 9.65493C17.1174 9.23758 17.0723 8.60602 16.6549 8.24431C16.2376 7.8826 15.606 7.92771 15.2443 8.34507L10.8 13.4731L8.75569 11.1143C8.39398 10.6969 7.76242 10.6518 7.34507 11.0135C6.92771 11.3752 6.8826 12.0068 7.24431 12.4242L10.0443 15.6549C10.2343 15.8741 10.51 16 10.8 16C11.09 16 11.3657 15.8741 11.5557 15.6549L16.7557 9.65493Z"></path>
-																</svg>
-																<span>Copied!</span>
-															</div> : ""}
-															<img className='slamIcon' src="/image/slam.png" />
-															<div className='slamAmount'>{balance} $SLM</div>
-															<div className='money'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(balance * tokenPrice)}</div>
-															{
-																props.isReserveClicked ? 
-																<>
-																	<div className='slamdetail-panel'>
-																		<div className='Operation-title'><img src="/image/operation.svg" />Operation Cost</div>
-																		<div className='content-panel'>
-																			<div className='content-title'>Your operations costs<br /> (without transaction fee).</div>
-																			<div className='content-detail'>
-																				<div className='slamValue'>{props.iValue} $SLM</div>
-																				<div className='realValue'>${new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(props.iValue * tokenPrice)}</div>
-																			</div>
-																		</div>
-																	</div>
-
-																	<div className='slamdetail-panel'>
-																		<div className='Operation-title'><img src="/image/gas.svg" />BNB Balance</div>
-																		<div className='content-panel'>
-																			<div className='content-title'>For this operation you <br /> should pay gas fee with BNB.</div>
-																			<div className='content-detail'>
-																				<div className='slamValue'>{props.bnbBalance ? props.bnbBalance : '...'} BNB</div>
-																			</div>
-																		</div>
-																	</div>
-
-																	<div className='visitBtn' onClick={() => props.buyAction()}>Accept and Buy</div>
-																	<div className='disconnectBtn' onClick={() => props.removeReserveClicked()}>Cancel</div>
-																</>
-																: 
-																<>
-																	<div className='slamdetail-panel'>
-																		<div className='Operation-title'><img src="/image/gas.svg" />Recent Transactions</div>
-																		
-																			{
-																				recentTx && (
-																					recentTx.length === 0 ?
-																						<div>You don't have recent history transaction.</div>
-																					:
-																					recentTx.map((row, i) => {
-																						return (
-																							<div className='content-panel' key={i}>
-																								<div className='content-title'>Buy {row.title} BubbleX <br /> {row.createDate} </div>
-																								<div className='content-detail'>
-																									<div className='slamValue'>{row['amount']} $SLM</div>
-																									<div className='realValue'><a href={row.txhash} target="_blank">View Trnasaction</a></div>
-																								</div>
-																							</div>
-																						);
-																					})
-																				)
-																			}
-																		
-																	</div>
-																	<a href="https://wallet.slamcoin.io" target="_blank" className='visitBtn'>Visit SlamWallet</a>
-																	<div className='disconnectBtn' onClick={ disconnectSlam }>Disconnect</div>
-																</>
-															}
-														</div>
-													 }
-												</div>
+												<SlamWallet { ...props } { ...stateForSlamWallet } />
 											</Foco>
 											:
 											<></>

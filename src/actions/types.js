@@ -24,11 +24,17 @@ export const ADD_POST = 'ADD_POST';
 export const ADD_COMMENT = 'ADD_COMMENT';
 export const REMOVE_COMMENT = 'REMOVE_COMMENT';
 
-
 export const GET_PROJECT_SETTING = "GET_PROJECT_SETTING";
 export const SET_PROJECT_SETTING = "SET_PROJECT_SETTING";
 export const SET_ISMATE_SETTING = "SET_ISMATE_SETTING";
 export const PROJECT_SETTING_LOADED = "PROJECT_SETTING_LOADED";
+
+export const SET_WEB3_PROVIDER = "SET_WEB3_PROVIDER";
+export const SET_ADDRESS = "SET_ADDRESS";
+export const SET_CHAIN_ID = "SET_CHAIN_ID";
+export const RESET_WEB3_PROVIDER = "RESET_WEB3_PROVIDER";
+export const SLAMWALLET_CONNECT = "SLAMWALLET_CONNECT";
+
 // dev
 export const Connect_Wallet_Status = "Connect_Wallet_Status";
 export const User_Address = "User_Address";

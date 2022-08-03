@@ -1,7 +1,5 @@
 import { WALLET_CONNECT, WALLET_DISCONNECT } from "../actions/types";
 
-
-
 export const walletReducer = (state = { isConnected: false }, { type }) => {
     switch (type) {
         case WALLET_CONNECT:
@@ -9,7 +7,6 @@ export const walletReducer = (state = { isConnected: false }, { type }) => {
         case WALLET_DISCONNECT:
             return { isConnected: false }
         default:
-
             return  { ...state }
     }
 }

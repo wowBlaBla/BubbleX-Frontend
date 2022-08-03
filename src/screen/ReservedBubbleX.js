@@ -4,7 +4,7 @@ import Header from '../components/Header/Header';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import Footer from '../components/Footer/Footer';
 import "./CustomTab.css";
-import BubblexABI from '../contract/BubbleX.json';
+import BubblexABI from '../contract/BubbleXPresale.json';
 import Web3 from "web3";
 import axios from 'axios';
 

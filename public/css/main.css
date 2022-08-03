@@ -283,8 +283,6 @@ body {
 }
 
 .header .LoginModal:first-child {
-    top: 90px;
-    right: 20px;
 }
 
 .header .LoginModal>div {
