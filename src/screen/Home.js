@@ -16,7 +16,9 @@ import Footer from "../components/Footer/Footer";
 import Header from "../components/Header/Header";
 import VideoPlayModal from "../components/VideoPlayModal/VideoPlayModal";
 import BubblexABI from '../contract/BubbleXPresale.json';
-import SlamABI from '../contract/SlamToken.json';
+
+const ethChainID = 4;
+const bnbChainID = 97;
 
 export default function Home() {
 	const [mintTokenCount, setMintTokenCount] = useState(100000);
@@ -27,6 +29,8 @@ export default function Home() {
 	const [nowSelect, setNowSelect] = useState(0);
 	const [itemValue, setItemValue] = useState(0);
 	const [itemCount, setItemCount] = useState(1);
+	const [priceInETH, setPriceInETH] = useState(['0.1', '1', '5']);
+	const [priceInSLAM, setPriceInSLAM] = useState(['5', '15', '25']);
 	const [userBalance, setBNBBalance] = useState(0);
 	const [showVideo, setShowVideo] = useState(false);
 	const [showVideo1, setShowVideo1] = useState(false);
@@ -40,8 +44,23 @@ export default function Home() {
 
 	const wallet = useSelector(store => store.wallet);
 
-	useEffect(() => {
+	useEffect(async () => {
 		setScrollY(window.scrollY);
+
+		const web3 = new Web3(process.env.REACT_APP_BSC);
+		const contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
+
+		let priceArr1 = [];
+		let priceArr2 = [];
+		for (let i = 0; i < 3; i ++) {
+			let price1 = ethers.utils.formatEther(await contract.methods.PRICE_IN_ETH(i).call());
+			let price2 = ethers.utils.formatEther(await contract.methods.PRICE_IN_SLAM(i).call());
+			priceArr1[i] = price1;
+			priceArr2[i] = price2;
+		}
+
+		setPriceInETH(priceArr1);
+		setPriceInSLAM(priceArr2);
 	}, []);
 
 	const onSetShowVideoPlayModal = () => {
@@ -61,12 +80,12 @@ export default function Home() {
 	}
 
 	const onSetRandomReverse = async (iCount) => {
-		setItemCount(iCount);
 		setNowSelect(0);
+		setItemCount(iCount);
 
 		if (iCount == 0) return;
 		
-		reserveOnBubbleX(iCount, 0, 5);
+		reserveOnBubbleX(iCount, 0, priceInSLAM[0]);
 	}
 
 	const onSetEpicReverse = async (iCount) => {
@@ -75,7 +94,7 @@ export default function Home() {
 
 		if (iCount == 0) return;
 
-		reserveOnBubbleX(iCount, 1, 15);
+		reserveOnBubbleX(iCount, 1, priceInSLAM[1]);
 	}
 
 	const onSetLegendaryReverse = async (iCount) => {
@@ -84,7 +103,7 @@ export default function Home() {
 
 		if (iCount == 0) return;
 
-		reserveOnBubbleX(iCount, 2, 25);
+		reserveOnBubbleX(iCount, 2, priceInSLAM[2]);
 	}
 
 	const reserveOnBubbleX = async (iCount, mintType, slamAmount) => {
@@ -93,14 +112,14 @@ export default function Home() {
 			return;
 		}
 
-		if (wallet.chainId != 97 && wallet.chainId != 4) {
+		if (wallet.slamWallet == null && wallet.chainId != bnbChainID && wallet.chainId != ethChainID) {
 			toast.error("Please Change Network to ETH or BSC Testnet", {pauseOnFocusLoss: false});
 			return;
 		}
 
 		if(wallet.slamWallet == null) {
-			const web3 = new Web3(wallet.provider);
-			const contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS);
+			const web3 = wallet.web3;
+			const contract = wallet.contract;
 			const priceInETH = ethers.BigNumber.from(await contract.methods.PRICE_IN_ETH(mintType).call());
 			const amount = priceInETH.mul(iCount);
 			const result = await contract.methods.ReserveWithETH(iCount, mintType).send({
@@ -129,10 +148,9 @@ export default function Home() {
 	const buyAction = async () => {
 		removeReserveClicked();
 		const toastPending = toast.loading("1 transaction is pending....");
-		const web3 = new Web3(process.env.REACT_APP_BSC);
-		console.log(web3);
-		const tokenContract = new web3.eth.Contract(SlamABI, process.env.REACT_APP_SLAMTOKEN);
-		const BubbleContract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS);
+		const web3 = wallet.web3;
+		const tokenContract = wallet.slamContract;
+		const BubbleContract = wallet.contract;
 		const result = await tokenContract.methods.balanceOf(wallet.address).call();
 		const balance = web3.utils.fromWei(result, 'ether');
 		if(balance * 1 < itemValue) {
@@ -140,10 +158,9 @@ export default function Home() {
 			return;
 		}
 		const approveAmount = web3.utils.toWei(itemValue + '');
-		const approveTx = tokenContract.methods.approve(process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS, approveAmount);
+		const approveTx = tokenContract.methods.approve(process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB, approveAmount);
 		const gas = await approveTx.estimateGas({from: wallet.address});
 		const gasPrice = await web3.eth.getGasPrice();
-		// const gasFee = web3.utils.fromWei(gas * gasPrice + '', 'ether');
 		const txData = {
 			to: approveTx._parent._address,
 			data: approveTx.encodeABI(),
@@ -154,7 +171,7 @@ export default function Home() {
 		await web3.eth.sendSignedTransaction(signedTx.rawTransaction).catch(err => {
 			toast.update(toastPending, {render: "Insufficient BNB Balance For gas fee. You have to deposit some BNB to SlamWallet Address.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
 		});
-		const finalTx = BubbleContract.methods.mintWithSLAM(wallet.address, itemCount, nowSelect);
+		const finalTx = BubbleContract.methods.ReserveWithSLAM(itemCount, nowSelect);
 		const finalGas = await finalTx.estimateGas({from: wallet.address});
 		const finalTxData = {
 			to: finalTx._parent._address,
@@ -187,14 +204,13 @@ export default function Home() {
 	const getTransactionHis = async () => {
 		const res = await axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/transaction', {token: wallet.token});
 		const titleArr = ['Random', 'Epic', 'Legend'];
-		const priceArr = [5, 15, 25];
 		let getResult = [];
 		res.data.transactions.map((row, i) => {
 			if(row.isNFT?.length > 2) {
 				getResult.push({
-					amount: row.isNFT.substr(2, 1) * priceArr[Number(row.isNFT.substr(3, 1))],
+					amount: row.isNFT.substr(2, 1) * priceInSLAM[Number(row.isNFT.substr(3, 1))],
 					title: titleArr[Number(row.isNFT.substr(3, 1))],
-					txhash: "https://testnet.bscscan.com/tx/" + row.txhash,
+					txhash: `${process.env.REACT_APP_BLOCK_EXPLORER_BASEURL}/${row.txhash}`,
 					createDate: row.created_at
 				});
 			}
@@ -214,6 +230,8 @@ export default function Home() {
 						iValue={itemValue} 
 						bnbBalance = {userBalance}
 						updateTx = {recentTx}
+						setPriceInETH = {setPriceInETH}
+						setPriceInSLAM = {setPriceInSLAM}
 					/>
 					<div className="top_main">
 						<div className="top_content">
@@ -629,9 +647,9 @@ export default function Home() {
 							<div className="titlePanel random" id="reserveGroup">Random</div>
 							<div className="itemPanel">
 								<div className="value">
-									<div className="ethValue">0.1</div>
-									<div className="ethText">BNB</div>
-									<div className="ethValue">/5</div>
+									<div className="ethValue">{ priceInETH[0] }</div>
+									<div className="ethText">{ wallet.chainId == ethChainID ? 'ETH' : 'BNB'}</div>
+									<div className="ethValue">/{ priceInSLAM[0] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
 								<div className="textGroup">
@@ -658,9 +676,9 @@ export default function Home() {
 							<div className="titlePanel epic">Epic</div>
 							<div className="itemPanel">
 								<div className="value">
-									<div className="ethValue">1</div>
-									<div className="ethText">BNB</div>
-									<div className="ethValue">/15</div>
+									<div className="ethValue">{ priceInETH[1] }</div>
+									<div className="ethText">{ wallet.chainId == ethChainID ? 'ETH' : 'BNB'}</div>
+									<div className="ethValue">/{ priceInSLAM[1] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
 								<div className="textGroup">
@@ -684,9 +702,9 @@ export default function Home() {
 							<div className="titlePanel legendary">Legendary</div>
 							<div className="itemPanel">
 								<div className="value">
-									<div className="ethValue">5</div>
-									<div className="ethText">BNB</div>
-									<div className="ethValue">/25</div>
+									<div className="ethValue">{ priceInETH[2] }</div>
+									<div className="ethText">{ wallet.chainId == ethChainID ? 'ETH' : 'BNB'}</div>
+									<div className="ethValue">/{ priceInSLAM[2] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
 								<div className="textGroup">

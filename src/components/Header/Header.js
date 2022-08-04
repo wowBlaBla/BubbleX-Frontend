@@ -1,20 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { setIsMate } from "../../actions/projectSetting";
 import { useDispatch, connect, useSelector } from 'react-redux'
-import PropTypes from 'prop-types'
 import { ToastContainer, toast } from 'react-toastify';
+import { ethers, providers } from 'ethers'
+import PropTypes from 'prop-types'
+import Web3 from "web3";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import axios from 'axios';
+import Foco from 'react-foco';
+
 import 'react-toastify/dist/ReactToastify.css';
 
-import Web3Modal from "web3modal";
-import { providers } from 'ethers'
-import WalletConnectProvider from "@walletconnect/web3-provider";
-// import { Alert, Modal } from 'react-bootstrap';
-import axios from 'axios';
-// import { CopyToClipboard } from 'react-copy-to-clipboard'
-import Foco from 'react-foco';
-import { User_Address, Injected_Wallet } from '../../actions/types';
+import { setIsMate } from "../../actions/projectSetting";
+import { 
+	User_Address, Injected_Wallet,
+	SET_WEB3_PROVIDER, SET_ADDRESS, SET_CHAIN_ID, RESET_WEB3_PROVIDER, SLAMWALLET_CONNECT 
+} from '../../actions/types';
+import BubblexABI from '../../contract/BubbleXPresale.json';
+import SlamABI from '../../contract/SlamToken.json';
+
 import SlamWallet from '../SlamWallet/SlamWallet';
+
+
+const ethChainID = 4;
+const bnbChainID = 97;
 
 const providerOptions = {
 	walletconnect: {
@@ -23,20 +33,20 @@ const providerOptions = {
 			infuraId: "b9719f5304ad4806b0e693943f308652"
 		}
 	}
-}
-
+};
 const web3Modal = new Web3Modal({
 	network: "mainnet",
 	cacheProvider: true,
 	providerOptions
-})
+});
+
 
 function Header(props) {
 	const state = useSelector(store => store.wallet);
 	const [fixedHeader, setFixedHeader] = useState(false);
 	const [isReserveClicked, setIsReserveClicked] = useState(props.isReserveClicked ? props.isReserveClicked : false);
 
-	const { provider, web3Provider, address, chainId, slamWallet } = state;
+	const { provider, web3Provider, address, chainId, slamWallet, web3, contract } = state;
 	const dispatch = useDispatch();
 
 	const userAddress = useSelector(store => store.projectSetting.userAddress);
@@ -65,7 +75,6 @@ function Header(props) {
 	const handleClose = () => setOpenModal(false);
 
 	const onClickCopyBtn = (text) => {
-		console.log("Copy Test ==> ", text);
 		addressCopy(text)
 		setShowCopied(true);
 	}
@@ -90,10 +99,12 @@ function Header(props) {
 
 	useEffect(() => {
 		window.addEventListener('scroll', handleScroll);
+		
 		const isConnected = localStorage.getItem("walletAddress")?.length > 32 ? true : false;
 		if (isConnected) {
 			walletConnect();
 		}
+
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
 		}
@@ -111,26 +122,46 @@ function Header(props) {
 		try {
 			const provider = await web3Modal.connect();
 			const web3Provider = new providers.Web3Provider(provider);
-			
+
 			const network = await web3Provider.getNetwork();
 
 			const signer = web3Provider.getSigner();
 			const address = await signer.getAddress();
 			setWalletAddress(address);
 
-			dispatch({ type: 'User_Address', payload: address })
+			dispatch({ type: User_Address, payload: address })
 
 			localStorage.setItem('walletAddress', address);
 			dispatch({ type: Injected_Wallet, payload: true });
 
+			const web3 = new Web3(provider);
+			let contract;
+			
+			if (network.chainId == ethChainID) {
+				contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_ETH);
+			} else if (network.chainId == bnbChainID) {
+				contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
+			} else {
+				contract = null;
+			}
+
 			dispatch({
-				type: "SET_WEB3_PROVIDER",
+				type: SET_WEB3_PROVIDER,
+				web3: web3,
 				provider: provider,
 				web3Provider: web3Provider,
 				address: address,
 				chainId: network.chainId,
+				contract: contract,
 			});
 
+			let priceArr = [];
+			for (let i = 0; i < 3; i ++) {
+				let price = ethers.utils.formatEther(await contract.methods.PRICE_IN_ETH(i).call());
+				priceArr[i] = price;
+			}
+
+			props.setPriceInETH(priceArr);
 		} catch (err) {
 			console.log(err);
 		}
@@ -140,14 +171,12 @@ function Header(props) {
 		async function () {
 			await web3Modal.clearCachedProvider();
 			if (provider?.disconnect && typeof provider.disconnect === "function") {
-				alert()
 				await provider.disconnect();
-				//history.push('/');
 				setWalletAddress(null);
 			}
 
 			dispatch({
-				type: "RESET_WEB3_PROVIDER",
+				type: RESET_WEB3_PROVIDER,
 			});
 
 			localStorage.setItem('walletAddress', null);
@@ -160,25 +189,30 @@ function Header(props) {
 			if (!loginInfo.email || !loginInfo.password) {
 				return;
 			}
+
 			let _token = {};
 			setLoadingStatus(1);
 			await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/signin`, loginInfo).then(res => {
 				const { token, status, message } = res.data;
+
 				if (status == 'error') {
 					toast.error(message, {pauseOnFocusLoss: false});
 					setLoginSlamFlg(0);
 				} else setErrorMsg('');
+
 				if (status == 'success') _token = { token };
 			}).catch(error1 => {
-				
 			});
 
-			console.log(process.env);
+			const web3 = new Web3(process.env.REACT_APP_BSC);
+			const slamContract = new web3.eth.Contract(SlamABI, process.env.REACT_APP_SLAMTOKEN);
+			const BubbleContract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
 
 			if (_token) {
 				await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
 					if(res.data.status !== 'false') {
 						const { address: _wallet, name, slam } = res.data;
+
 						setWalletAddress(_wallet);
 						setFullName(name);
 						setBalance(slam);
@@ -186,29 +220,43 @@ function Header(props) {
 						setLoginInfo({
 							email: '', password: ''
 						});
+
 						dispatch({
-							type: "RESET_WEB3_PROVIDER",
+							type: RESET_WEB3_PROVIDER,
 						});
+
 						dispatch({ 
-							type: 'SLAMWALLET_CONNECT',
+							type: SLAMWALLET_CONNECT,
 							address: _wallet,
 							slamWallet: res.data.guid,
 							token: _token.token,
-							userId: res.data.id
-						})
+							userId: res.data.id,
+							web3: web3,
+							slamContract: slamContract,
+							contract: BubbleContract
+						});
+
 						toast.success('Successfully Connected!', {pauseOnFocusLoss: false});
 					} else {
 						setLoginSlamFlg(0);
 						dispatch({
-							type: "RESET_WEB3_PROVIDER",
+							type: RESET_WEB3_PROVIDER,
 						});
 					}
 				}).catch(err1 => {
 					setLoginSlamFlg(0);
 				});
+
 				const res = await axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/transaction', _token);
 				const titleArr = ['Random', 'Epic', 'Legend'];
-				const priceArr = [5, 15, 25];
+				let priceArr = [];
+				for (let i = 0; i < 3; i ++) {
+					let price = ethers.utils.formatEther(await BubbleContract.methods.PRICE_IN_SLAM(i).call());
+					priceArr[i] = price;
+				}
+
+				props.setPriceInSLAM(priceArr);
+
 				let getResult = [];
 				res.data.transactions.map((row, i) => {
 					if(row.isNFT?.length > 2) {
@@ -225,6 +273,7 @@ function Header(props) {
 		} catch (err) {
 			console.log(err);
 		}
+
 		setLoadingStatus(0);
 	}
 
@@ -237,32 +286,42 @@ function Header(props) {
 		setWalletAddress(null); 
 		setFullName(''); 
 		setBalance(0);
+
 		dispatch({
-			type: "RESET_WEB3_PROVIDER",
+			type: RESET_WEB3_PROVIDER,
 		});
+
 		localStorage.setItem('walletAddress', null);
 	}
 
 	useEffect(() => {
 		if (provider?.on) {
-
 			const handleAccountsChanged = (accounts) => {
 				dispatch({
-					type: "SET_ADDRESS",
+					type: SET_ADDRESS,
 					address: accounts[0],
 				});
 			};
 
 			const handleChainChanged = (chain) => {
+
+				let contract;
+				if (chain == ethChainID) {
+					contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_ETH);
+				} else if (chain == bnbChainID) {
+					contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
+				} else {
+					contract = null;
+				}
+
 				dispatch({
-					type: "SET_CHAIN_ID",
+					type: SET_CHAIN_ID,
 					chainId: chain,
+					contract: contract,
 				});
 			};
 
 			const handleDisconnect = (error) => {
-				// eslint-disable-next-line no-console
-				//disconnect();
 			};
 
 			provider.on("accountsChanged", handleAccountsChanged);

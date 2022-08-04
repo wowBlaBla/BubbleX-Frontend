@@ -1,13 +1,16 @@
 import { SET_WEB3_PROVIDER, SET_ADDRESS, SET_CHAIN_ID, RESET_WEB3_PROVIDER, SLAMWALLET_CONNECT } from "../actions/types";
 
 const initialState = {
+	web3: null,
 	provider: null,
 	web3Provider: null,
 	address: null,
 	chainId: null,
 	slamWallet: null,
 	token: null,
-	userId: null
+	userId: null,
+	contract: null,
+	slamContract: null,
 };
 
 export function walletReducer(state = initialState, action) {
@@ -16,9 +19,11 @@ export function walletReducer(state = initialState, action) {
 			return {
 				...state,
 				provider: action.provider,
+				web3: action.web3,
 				web3Provider: action.web3Provider,
 				address: action.address,
 				chainId: action.chainId,
+				contract: action.contract,
 			};
 		case SET_ADDRESS:
 			return {
@@ -29,6 +34,7 @@ export function walletReducer(state = initialState, action) {
 			return {
 				...state,
 				chainId: action.chainId,
+				contract: action.contract,
 			};
 		case RESET_WEB3_PROVIDER:
 			return initialState;
@@ -38,7 +44,10 @@ export function walletReducer(state = initialState, action) {
 				address: action.address,
 				slamWallet: action.slamWallet,
 				token: action.token,
-				userId: action.userId
+				userId: action.userId, 
+				web3: action.web3,
+				contract: action.contract,
+				slamContract: action.slamContract,
 			}
 		default:
 			return state;
