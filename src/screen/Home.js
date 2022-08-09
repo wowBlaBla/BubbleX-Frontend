@@ -734,7 +734,7 @@ export default function Home() {
 								<div className="value">
 									<div className="ethValue">{ Number(wallet.chainId) == Number(ethChainID) ? priceInETH[0] : priceInBNB[0] }</div>
 									<div className="ethText">{ Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB'}</div>
-									<div className="ethValue">/{ priceInSLAM[0] }</div>
+									<div className="ethValue">/ { priceInSLAM[0] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
 								<div className="textGroup">
@@ -763,7 +763,7 @@ export default function Home() {
 								<div className="value">
 									<div className="ethValue">{ Number(wallet.chainId) == Number(ethChainID) ? priceInETH[1] : priceInBNB[1] }</div>
 									<div className="ethText">{ Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB'}</div>
-									<div className="ethValue">/{ priceInSLAM[1] }</div>
+									<div className="ethValue">/ { priceInSLAM[1] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
 								<div className="textGroup">
@@ -789,7 +789,7 @@ export default function Home() {
 								<div className="value">
 									<div className="ethValue">{ Number(wallet.chainId) == Number(ethChainID) ? priceInETH[2] : priceInBNB[2] }</div>
 									<div className="ethText">{ Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB'}</div>
-									<div className="ethValue">/{ priceInSLAM[2] }</div>
+									<div className="ethValue">/ { priceInSLAM[2] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
 								<div className="textGroup">
