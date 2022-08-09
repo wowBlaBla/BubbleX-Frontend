@@ -17,14 +17,12 @@ import {
 	User_Address, Injected_Wallet,
 	SET_WEB3_PROVIDER, SET_ADDRESS, SET_CHAIN_ID, RESET_WEB3_PROVIDER, SLAMWALLET_CONNECT 
 } from '../../actions/types';
-import BubblexABI from '../../contract/BubbleXPresale.json';
 import SlamABI from '../../contract/SlamToken.json';
-
 import SlamWallet from '../SlamWallet/SlamWallet';
 
 
-const ethChainID = 4;
-const bnbChainID = 97;
+const ethChainID = process.env.REACT_APP_ETH_CHAIN_ID;
+const bnbChainID = process.env.REACT_APP_BNB_CHAIN_ID;
 
 const providerOptions = {
 	walletconnect: {
@@ -135,15 +133,6 @@ function Header(props) {
 			dispatch({ type: Injected_Wallet, payload: true });
 
 			const web3 = new Web3(provider);
-			let contract;
-			
-			if (network.chainId == ethChainID) {
-				contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_ETH);
-			} else if (network.chainId == bnbChainID) {
-				contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
-			} else {
-				contract = null;
-			}
 
 			dispatch({
 				type: SET_WEB3_PROVIDER,
@@ -152,16 +141,7 @@ function Header(props) {
 				web3Provider: web3Provider,
 				address: address,
 				chainId: network.chainId,
-				contract: contract,
 			});
-
-			let priceArr = [];
-			for (let i = 0; i < 3; i ++) {
-				let price = ethers.utils.formatEther(await contract.methods.PRICE_IN_ETH(i).call());
-				priceArr[i] = price;
-			}
-
-			props.setPriceInETH(priceArr);
 		} catch (err) {
 			console.log(err);
 		}
@@ -206,7 +186,6 @@ function Header(props) {
 
 			const web3 = new Web3(process.env.REACT_APP_BSC);
 			const slamContract = new web3.eth.Contract(SlamABI, process.env.REACT_APP_SLAMTOKEN);
-			const BubbleContract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
 
 			if (_token) {
 				await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
@@ -233,7 +212,6 @@ function Header(props) {
 							userId: res.data.id,
 							web3: web3,
 							slamContract: slamContract,
-							contract: BubbleContract
 						});
 
 						toast.success('Successfully Connected!', {pauseOnFocusLoss: false});
@@ -249,19 +227,12 @@ function Header(props) {
 
 				const res = await axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/transaction', _token);
 				const titleArr = ['Random', 'Epic', 'Legend'];
-				let priceArr = [];
-				for (let i = 0; i < 3; i ++) {
-					let price = ethers.utils.formatEther(await BubbleContract.methods.PRICE_IN_SLAM(i).call());
-					priceArr[i] = price;
-				}
-
-				props.setPriceInSLAM(priceArr);
 
 				let getResult = [];
 				res.data.transactions.map((row, i) => {
 					if(row.isNFT?.length > 2) {
 						getResult.push({
-							amount: row.isNFT.substr(2, 1) * priceArr[Number(row.isNFT.substr(3, 1))],
+							amount: row.isNFT.substr(2, 1) * props.priceInSLAM[Number(row.isNFT.substr(3, 1))],
 							title: titleArr[Number(row.isNFT.substr(3, 1))],
 							txhash: `${process.env.REACT_APP_BLOCK_EXPLORER_BASEURL}/${row.txhash}`,
 							createDate: row.created_at
@@ -303,21 +274,14 @@ function Header(props) {
 				});
 			};
 
-			const handleChainChanged = (chain) => {
-
-				let contract;
-				if (chain == ethChainID) {
-					contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_ETH);
-				} else if (chain == bnbChainID) {
-					contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
-				} else {
-					contract = null;
-				}
+			const handleChainChanged = async (chain) => {
+				const provider = await web3Modal.connect();
+				const web3Provider = new providers.Web3Provider(provider);
 
 				dispatch({
 					type: SET_CHAIN_ID,
 					chainId: chain,
-					contract: contract,
+					web3Provider: web3Provider
 				});
 			};
 
@@ -342,6 +306,10 @@ function Header(props) {
 	useEffect(() => {
 		if(props.isReserveClicked) setOpenModal(true);
 	}, [props.isReserveClicked]);
+
+	useEffect(() => {
+		setBalance(props.slamBalance);
+	}, [props.slamBalance]);
 
 	const stateForSlamWallet = {
 		loadingStatus,
@@ -479,7 +447,7 @@ function Header(props) {
 								<>
 									{ loginSlamFlg == 0 ? <div className="connectWallet" onClick={walletConnect}>Connect wallet</div> : "" }
 									<div className="connectSlamWalletContent">
-										<div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect" : "Connected" } SlamWallet</div>
+										<div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect SlamWallet" : "SlamWallet Connected" }</div>
 										{isOpen ?
 											<Foco 
 												onClickOutside={() => {setOpenModal(false); props.removeReserveClicked();}}

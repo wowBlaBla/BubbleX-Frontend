@@ -98,7 +98,7 @@ function SlamWallet(props) {
 														<div className='content-title'>Buy {row.title} BubbleX <br /> {row.createDate} </div>
 														<div className='content-detail'>
 															<div className='slamValue'>{row['amount']} $SLM</div>
-															<div className='realValue'><a href={row.txhash} target="_blank">View Trnasaction</a></div>
+															<div className='realValue'><a href={row.txhash} target="_blank">View Transaction</a></div>
 														</div>
 													</div>
 												);

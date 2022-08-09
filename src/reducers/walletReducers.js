@@ -9,7 +9,6 @@ const initialState = {
 	slamWallet: null,
 	token: null,
 	userId: null,
-	contract: null,
 	slamContract: null,
 };
 
@@ -23,7 +22,6 @@ export function walletReducer(state = initialState, action) {
 				web3Provider: action.web3Provider,
 				address: action.address,
 				chainId: action.chainId,
-				contract: action.contract,
 			};
 		case SET_ADDRESS:
 			return {
@@ -34,7 +32,7 @@ export function walletReducer(state = initialState, action) {
 			return {
 				...state,
 				chainId: action.chainId,
-				contract: action.contract,
+				web3Provider: action.web3Provider,
 			};
 		case RESET_WEB3_PROVIDER:
 			return initialState;
@@ -46,7 +44,6 @@ export function walletReducer(state = initialState, action) {
 				token: action.token,
 				userId: action.userId, 
 				web3: action.web3,
-				contract: action.contract,
 				slamContract: action.slamContract,
 			}
 		default:

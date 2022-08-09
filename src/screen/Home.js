@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import Modal from 'react-bootstrap/Modal';
 import Web3 from "web3";
+import { ethers } from "ethers";
 import axios from "axios";
-import { ethers } from 'ethers';
 import { connect, useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import { Toast } from "react-bootstrap";
@@ -17,8 +17,8 @@ import Header from "../components/Header/Header";
 import VideoPlayModal from "../components/VideoPlayModal/VideoPlayModal";
 import BubblexABI from '../contract/BubbleXPresale.json';
 
-const ethChainID = 4;
-const bnbChainID = 97;
+const ethChainID = process.env.REACT_APP_ETH_CHAIN_ID;
+const bnbChainID = process.env.REACT_APP_BNB_CHAIN_ID;
 
 export default function Home() {
 	const [mintTokenCount, setMintTokenCount] = useState(100000);
@@ -29,9 +29,12 @@ export default function Home() {
 	const [nowSelect, setNowSelect] = useState(0);
 	const [itemValue, setItemValue] = useState(0);
 	const [itemCount, setItemCount] = useState(1);
+	const [adminWallet, setAdminWallet] = useState("");
 	const [priceInETH, setPriceInETH] = useState(['0.1', '1', '5']);
+	const [priceInBNB, setPriceInBNB] = useState(['0.1', '1', '5']);
 	const [priceInSLAM, setPriceInSLAM] = useState(['5', '15', '25']);
 	const [userBalance, setBNBBalance] = useState(0);
+	const [userSlamBalance, setSLAMBalance] = useState(0);
 	const [showVideo, setShowVideo] = useState(false);
 	const [showVideo1, setShowVideo1] = useState(false);
 	const [showVideoPlayModal, setShowVideoPlayModal] = useState(false);
@@ -46,21 +49,35 @@ export default function Home() {
 
 	useEffect(async () => {
 		setScrollY(window.scrollY);
+		await axios.get(`${process.env.REACT_APP_SLAMBACKEND}api/settings`).then(res => {
+			const { setting } = res.data;
 
-		const web3 = new Web3(process.env.REACT_APP_BSC);
-		const contract = new web3.eth.Contract(BubblexABI, process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB);
+			console.log(setting);
 
-		let priceArr1 = [];
-		let priceArr2 = [];
-		for (let i = 0; i < 3; i ++) {
-			let price1 = ethers.utils.formatEther(await contract.methods.PRICE_IN_ETH(i).call());
-			let price2 = ethers.utils.formatEther(await contract.methods.PRICE_IN_SLAM(i).call());
-			priceArr1[i] = price1;
-			priceArr2[i] = price2;
-		}
+			setAdminWallet(setting.admin_wallet);
 
-		setPriceInETH(priceArr1);
-		setPriceInSLAM(priceArr2);
+			let price = [
+				setting.price_eth_common, 
+				setting.price_eth_epic, 
+				setting.price_eth_legendary
+			];
+			setPriceInETH(price);
+
+			price = [
+				setting.price_bnb_common, 
+				setting.price_bnb_epic, 
+				setting.price_bnb_legendary
+			];
+			setPriceInBNB(price);
+
+			price = [
+				setting.price_slam_common, 
+				setting.price_slam_epic, 
+				setting.price_slam_legendary
+			];
+			setPriceInSLAM(price);
+		}).catch(err => {
+		});
 	}, []);
 
 	const onSetShowVideoPlayModal = () => {
@@ -112,26 +129,54 @@ export default function Home() {
 			return;
 		}
 
-		if (wallet.slamWallet == null && wallet.chainId != bnbChainID && wallet.chainId != ethChainID) {
+		if (wallet.slamWallet == null && Number(wallet.chainId) != Number(bnbChainID) && Number(wallet.chainId) != Number(ethChainID)) {
 			toast.error("Please Change Network to ETH or BSC Testnet", {pauseOnFocusLoss: false});
 			return;
 		}
 
 		if(wallet.slamWallet == null) {
 			const web3 = wallet.web3;
-			const contract = wallet.contract;
-			const priceInETH = ethers.BigNumber.from(await contract.methods.PRICE_IN_ETH(mintType).call());
-			const amount = priceInETH.mul(iCount);
-			const result = await contract.methods.ReserveWithETH(iCount, mintType).send({
-				from: wallet.address,
-				value: amount.toString()
-			}).catch(err => {
-				toast.error(err.message, {pauseOnFocusLoss: false});
-			})
+			let price = ethers.utils.parseEther(Number(wallet.chainId) == Number(ethChainID) ? priceInETH[mintType].toString() : priceInBNB[mintType].toString());
+			const amount = price.mul(iCount);
+			const gasPrice = await web3.eth.getGasPrice();
 
-			if(result?.blockHash) {
-				toast.success("Successfully Minted!", {pauseOnFocusLoss: false});
-			}
+			const tx = {
+				'to': adminWallet, // faucet address to return eth
+				'value': amount, // 1 ETH
+				'gasPrice': ethers.utils.hexlify(Math.round(gasPrice * 1.3)),
+				'gasLimit': ethers.utils.hexlify(21000)
+			};
+
+			const signer = await wallet.web3Provider.getSigner();
+			const signedTx = await signer.sendTransaction(tx).then(async (result) => {
+				const toastPending = toast.loading("1 transaction is pending....");
+				const interval = setInterval(function() {
+					web3.eth.getTransactionReceipt(result.hash, function(err, rec) {
+						if (rec) {
+							clearInterval(interval);
+
+							axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/cryptoTx', {
+								user_id: -1,
+								amount: ethers.utils.formatEther(amount.toString()),
+								transactionHash: result.hash,
+								from: result.from,
+								to: result.to,
+								isNFT: '0x' + itemCount + mintType,
+								nativeCoin: Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB',
+								txMethod: 2
+							}).then(res => {
+								if(res.data.status === 'success') {
+									toast.update(toastPending, {render: "Successfully Minted.", type: "success", isLoading: false, autoClose: 3000, className: 'rotateY animated', closeButton: true, pauseOnFocusLoss: false});
+								} else {
+									toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+								}
+							}).catch(err => {
+								toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+							})
+						}
+					});
+				}, 1000);
+			});
 		} else {
 			setItemValue(iCount * slamAmount);
 			setIsReserveClicked(true);
@@ -150,27 +195,57 @@ export default function Home() {
 		const toastPending = toast.loading("1 transaction is pending....");
 		const web3 = wallet.web3;
 		const tokenContract = wallet.slamContract;
-		const BubbleContract = wallet.contract;
 		const result = await tokenContract.methods.balanceOf(wallet.address).call();
 		const balance = web3.utils.fromWei(result, 'ether');
+
 		if(balance * 1 < itemValue) {
 			toast.update(toastPending, {render: "Insufficient SLAM TOKEN", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
 			return;
 		}
-		const approveAmount = web3.utils.toWei(itemValue + '');
-		const approveTx = tokenContract.methods.approve(process.env.REACT_APP_BUBBLEXPRESALE_CONTRACT_ADDRESS_BNB, approveAmount);
-		const gas = await approveTx.estimateGas({from: wallet.address});
+
+		const amount = web3.utils.toWei(itemValue + '');
+		const transferTx = tokenContract.methods.transfer(adminWallet, amount);
+		const gas = await transferTx.estimateGas({from: wallet.address});
 		const gasPrice = await web3.eth.getGasPrice();
+
 		const txData = {
-			to: approveTx._parent._address,
-			data: approveTx.encodeABI(),
-			gas: gas,
-			gasPrice: gasPrice
+			to: transferTx._parent._address,
+			data: transferTx.encodeABI(),
+			gas: ethers.utils.hexlify(Number(gas)),
+			gasPrice: ethers.utils.hexlify(Math.round(gasPrice * 1.3))
 		};
+
 		const signedTx = await web3.eth.accounts.signTransaction(txData, wallet.slamWallet);
-		await web3.eth.sendSignedTransaction(signedTx.rawTransaction).catch(err => {
+		const finalResult = await web3.eth.sendSignedTransaction(signedTx.rawTransaction).catch(err => {
 			toast.update(toastPending, {render: "Insufficient BNB Balance For gas fee. You have to deposit some BNB to SlamWallet Address.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
 		});
+
+		if(finalResult) {
+			axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/cryptoTx', {
+				user_id: wallet.userId,
+				amount: itemValue * -1,
+				transactionHash: finalResult.transactionHash,
+				from: finalResult.from,
+				to: adminWallet,
+				isNFT: '0x' + itemCount + nowSelect,
+				nativeCoin: 'SLAM',
+				txMethod: 1
+			}).then(res => {
+				if(res.data.status === 'success') {
+					toast.update(toastPending, {render: "Successfully Minted.", type: "success", isLoading: false, autoClose: 3000, className: 'rotateY animated', closeButton: true, pauseOnFocusLoss: false});
+				} else {
+					toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+				}
+
+				getTransactionHis();
+			}).catch(err => {
+				toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+			})
+		} else {
+			toast.update(toastPending, {render: "Failed Mint.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
+		}
+
+		/*
 		const finalTx = BubbleContract.methods.ReserveWithSLAM(itemCount, nowSelect);
 		const finalGas = await finalTx.estimateGas({from: wallet.address});
 		const finalTxData = {
@@ -179,10 +254,12 @@ export default function Home() {
 			gas: finalGas,
 			gasPrice: gasPrice
 		}
+
 		const finalSignedTx = await web3.eth.accounts.signTransaction(finalTxData, wallet.slamWallet);
 		const finalResult = await web3.eth.sendSignedTransaction(finalSignedTx.rawTransaction).catch(err => {
 			toast.update(toastPending, {render: "Insufficient BNB Balance For gas fee. You have to deposit some BNB to SlamWallet Address.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
 		});
+
 		if(finalResult) {
 			axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/cryptoTx', {
 				token: wallet.token, user_id: wallet.userId, amount: itemValue * -1, transactionHash: finalResult.transactionHash, txType: 2, isNFT: '0x' + itemCount + nowSelect
@@ -192,6 +269,7 @@ export default function Home() {
 				} else {
 					toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
 				}
+
 				getTransactionHis();
 			}).catch(err => {
 				toast.update(toastPending, {render: "Some Error occured.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
@@ -199,6 +277,7 @@ export default function Home() {
 		} else {
 			toast.update(toastPending, {render: "Failed Mint.", type: "error", isLoading: false, closeButton: true, autoClose: 3000});
 		}
+		*/
 	}
 
 	const getTransactionHis = async () => {
@@ -216,6 +295,7 @@ export default function Home() {
 			}
 		});
 		setRecentTx(getResult);
+		setSLAMBalance(res.data.slam);
 	}
 
 	return (
@@ -229,8 +309,13 @@ export default function Home() {
 						buyAction = {buyAction}
 						iValue={itemValue} 
 						bnbBalance = {userBalance}
+						slamBalance = {userSlamBalance}
 						updateTx = {recentTx}
+						priceInETH = {priceInETH}
+						priceInBNB = {priceInBNB}
+						priceInSLAM = {priceInSLAM}
 						setPriceInETH = {setPriceInETH}
+						setPriceInBNB = {setPriceInBNB}
 						setPriceInSLAM = {setPriceInSLAM}
 					/>
 					<div className="top_main">
@@ -647,8 +732,8 @@ export default function Home() {
 							<div className="titlePanel random" id="reserveGroup">Random</div>
 							<div className="itemPanel">
 								<div className="value">
-									<div className="ethValue">{ priceInETH[0] }</div>
-									<div className="ethText">{ wallet.chainId == ethChainID ? 'ETH' : 'BNB'}</div>
+									<div className="ethValue">{ Number(wallet.chainId) == Number(ethChainID) ? priceInETH[0] : priceInBNB[0] }</div>
+									<div className="ethText">{ Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB'}</div>
 									<div className="ethValue">/{ priceInSLAM[0] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
@@ -676,8 +761,8 @@ export default function Home() {
 							<div className="titlePanel epic">Epic</div>
 							<div className="itemPanel">
 								<div className="value">
-									<div className="ethValue">{ priceInETH[1] }</div>
-									<div className="ethText">{ wallet.chainId == ethChainID ? 'ETH' : 'BNB'}</div>
+									<div className="ethValue">{ Number(wallet.chainId) == Number(ethChainID) ? priceInETH[1] : priceInBNB[1] }</div>
+									<div className="ethText">{ Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB'}</div>
 									<div className="ethValue">/{ priceInSLAM[1] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
@@ -702,8 +787,8 @@ export default function Home() {
 							<div className="titlePanel legendary">Legendary</div>
 							<div className="itemPanel">
 								<div className="value">
-									<div className="ethValue">{ priceInETH[2] }</div>
-									<div className="ethText">{ wallet.chainId == ethChainID ? 'ETH' : 'BNB'}</div>
+									<div className="ethValue">{ Number(wallet.chainId) == Number(ethChainID) ? priceInETH[2] : priceInBNB[2] }</div>
+									<div className="ethText">{ Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB'}</div>
 									<div className="ethValue">/{ priceInSLAM[2] }</div>
 									<div className="ethText">$SLM</div>
 								</div>
