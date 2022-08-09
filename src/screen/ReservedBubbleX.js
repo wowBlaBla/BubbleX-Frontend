@@ -17,6 +17,8 @@ export default function ReservedBubbleX() {
 	const [legendaryTokenUris, setLegendaryTokenUris] = useState([]);
 	const [selectedNFTURL, setSelectNFTURL] = useState("");
 
+	const [bubbleCountValue, setBubbleCountValue] = useState(1);
+
 	const ReversedBubbleX = async () => {
 		ReversedRandomBubbleX();
 		ReversedEpicBubbleX();
@@ -160,8 +162,55 @@ export default function ReservedBubbleX() {
 		<div className="ReservedBubbleX">
 			<Header selected="ReservedBubbleX" />
 			<div className="mainContent">
-				<div className="title">Reserved BubbleX To You</div>
-				<Tabs>
+				<div className="aboutUser" >
+					<img src="/image/avatar.png" alt />
+					<div className="userGroup">
+						<div className="user">user11</div>
+						<div className="walletAddress">
+							<button className="copy-address">Copy address<img src="/image/address_group.svg" /></button>
+							<button className="share">Share<img src="/image/share.svg" /></button>
+						</div>
+					</div>
+
+				</div>
+
+				<div className="title">Reserved bubbles</div>
+				<div className="subContent">
+					<div className="Reserved_bubbles">
+						<div className="characterItem0">
+							<img src="/image/plus.png" />
+							<div className="text">Reserve Bubbles</div>
+						</div>
+
+						<div className="characterItem1">
+							<img src="/image/random_character.png" />
+						</div>
+						<div className="characterItem1">
+							<img src="/image/legendary_character.png" />
+						</div>
+						
+					</div>
+
+					<div className="mint-bubblex">
+						<div className="subtitle">Mint the Bubble</div>
+						<div className="mint_contents">You will be able to mint the reserved bubble on the minting day</div>
+						<div className="mint_count">Bubble count</div>
+						<div className="input_count">
+							<input type="number" className='bubbleNumber' readOnly value={bubbleCountValue}/>
+							<div className='numberControls'>
+								<div className='up-arrow' onClick={()=>setBubbleCountValue(bubbleCountValue + 1)}><img src="/image/up.png"/></div>
+								<div className='down-arrow' onClick={()=>{if(bubbleCountValue != 1)setBubbleCountValue(bubbleCountValue - 1);}}><img src="/image/down.png"/></div>
+							</div>
+						</div>
+						<button className="mint">Mint the Bubble</button>
+						<div className="mint_prediction">Mint will be avaliable in January</div>
+					</div>
+				</div>
+
+
+
+
+				{/* <Tabs>
 					<TabList>
 						<Tab onClick={() => setSelectNFTURL("")}>Random</Tab>
 						<Tab onClick={() => setSelectNFTURL("")}>Epic</Tab>
@@ -218,7 +267,7 @@ export default function ReservedBubbleX() {
 							: <></>
 						}
 					</TabPanel>
-				</Tabs>
+				</Tabs> */}
 
 			</div>
 			<Footer />

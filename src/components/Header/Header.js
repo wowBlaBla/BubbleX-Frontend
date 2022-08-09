@@ -9,13 +9,13 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import axios from 'axios';
 import Foco from 'react-foco';
-
+import { isMobile } from 'react-device-detect';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { setIsMate } from "../../actions/projectSetting";
-import { 
+import {
 	User_Address, Injected_Wallet,
-	SET_WEB3_PROVIDER, SET_ADDRESS, SET_CHAIN_ID, RESET_WEB3_PROVIDER, SLAMWALLET_CONNECT 
+	SET_WEB3_PROVIDER, SET_ADDRESS, SET_CHAIN_ID, RESET_WEB3_PROVIDER, SLAMWALLET_CONNECT
 } from '../../actions/types';
 import SlamABI from '../../contract/SlamToken.json';
 import SlamWallet from '../SlamWallet/SlamWallet';
@@ -52,6 +52,8 @@ function Header(props) {
 	const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 	const [showHomeHover, setShowHomeHover] = useState(false);
 	const [showMarketplaceHover, setShowMarketplaceHover] = useState(false);
+	const [showProfileHover, setShowProfileHover] = useState(false);
+	const [showProfileMobile, setShowProfileMobile] = useState(false);
 
 	const [isOpen, setOpenModal] = useState(false);
 	const [view, setView] = useState(false);
@@ -69,7 +71,7 @@ function Header(props) {
 	const [loadingStatus, setLoadingStatus] = useState(0);
 
 	const [showCopied, setShowCopied] = useState(false);
-	
+
 	const handleClose = () => setOpenModal(false);
 
 	const onClickCopyBtn = (text) => {
@@ -97,7 +99,7 @@ function Header(props) {
 
 	useEffect(() => {
 		window.addEventListener('scroll', handleScroll);
-		
+
 		const isConnected = localStorage.getItem("walletAddress")?.length > 32 ? true : false;
 		if (isConnected) {
 			walletConnect();
@@ -176,7 +178,7 @@ function Header(props) {
 				const { token, status, message } = res.data;
 
 				if (status == 'error') {
-					toast.error(message, {pauseOnFocusLoss: false});
+					toast.error(message, { pauseOnFocusLoss: false });
 					setLoginSlamFlg(0);
 				} else setErrorMsg('');
 
@@ -189,7 +191,7 @@ function Header(props) {
 
 			if (_token) {
 				await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/token`, _token).then(res => {
-					if(res.data.status !== 'false') {
+					if (res.data.status !== 'false') {
 						const { address: _wallet, name, slam } = res.data;
 
 						setWalletAddress(_wallet);
@@ -204,7 +206,7 @@ function Header(props) {
 							type: RESET_WEB3_PROVIDER,
 						});
 
-						dispatch({ 
+						dispatch({
 							type: SLAMWALLET_CONNECT,
 							address: _wallet,
 							slamWallet: res.data.guid,
@@ -214,7 +216,7 @@ function Header(props) {
 							slamContract: slamContract,
 						});
 
-						toast.success('Successfully Connected!', {pauseOnFocusLoss: false});
+						toast.success('Successfully Connected!', { pauseOnFocusLoss: false });
 					} else {
 						setLoginSlamFlg(0);
 						dispatch({
@@ -230,7 +232,7 @@ function Header(props) {
 
 				let getResult = [];
 				res.data.transactions.map((row, i) => {
-					if(row.isNFT?.length > 2) {
+					if (row.isNFT?.length > 2) {
 						getResult.push({
 							amount: row.isNFT.substr(2, 1) * props.priceInSLAM[Number(row.isNFT.substr(3, 1))],
 							title: titleArr[Number(row.isNFT.substr(3, 1))],
@@ -253,9 +255,9 @@ function Header(props) {
 	}, [props.updateTx]);
 
 	const disconnectSlam = async () => {
-		setLoginSlamFlg(0); 
-		setWalletAddress(null); 
-		setFullName(''); 
+		setLoginSlamFlg(0);
+		setWalletAddress(null);
+		setFullName('');
 		setBalance(0);
 
 		dispatch({
@@ -304,7 +306,7 @@ function Header(props) {
 	}, [provider]);
 
 	useEffect(() => {
-		if(props.isReserveClicked) setOpenModal(true);
+		if (props.isReserveClicked) setOpenModal(true);
 	}, [props.isReserveClicked]);
 
 	useEffect(() => {
@@ -403,7 +405,7 @@ function Header(props) {
 										<a href="/#metaverseDescription">Metaverse description</a>
 										<a href="/#bubbleXMatch">BubbleX match mechanics</a>
 										<a href="/#bubbleCoinMining">Bubblecoin mining mechanics</a>
-										<Link to="/ReservedBubbleX">Reserved bubbleX to you</Link>
+										{/* <Link to="/ReservedBubbleX">Reserved bubbleX to you</Link> */}
 										<div className="uparrow"></div>
 									</div>
 								</div> : <></>}
@@ -413,7 +415,8 @@ function Header(props) {
 								<a href="/#metaverseDescription1" onClick={() => setShowMobileSidebar(false)}>Metaverse description</a>
 								<a href="/#bubbleXMatch1" onClick={() => setShowMobileSidebar(false)}>BubbleX match mechanics</a>
 								<a href="/#bubbleCoinMining1" onClick={() => setShowMobileSidebar(false)}>Bubblecoin mining mechanics</a>
-								<Link to="/ReservedBubbleX">Reserved bubbleX to you</Link>
+								{/* <Link to="/ReservedBubbleX">Reserved bubbleX to you</Link> */}
+								
 							</div>
 						</div>
 						<div className="menuGroup">
@@ -445,14 +448,14 @@ function Header(props) {
 						{
 							!web3Provider ?
 								<>
-									{ loginSlamFlg == 0 ? <div className="connectWallet" onClick={walletConnect}>Connect wallet</div> : "" }
+									{loginSlamFlg == 0 ? <div className="connectWallet" onClick={walletConnect}>Connect wallet</div> : ""}
 									<div className="connectSlamWalletContent">
-										<div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{ loginSlamFlg == 0 ? "Connect SlamWallet" : "SlamWallet Connected" }</div>
+										<div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{loginSlamFlg == 0 ? "Connect SlamWallet" : "SlamWallet Connected"}</div>
 										{isOpen ?
-											<Foco 
-												onClickOutside={() => {setOpenModal(false); props.removeReserveClicked();}}
+											<Foco
+												onClickOutside={() => { setOpenModal(false); props.removeReserveClicked(); }}
 											>
-												<SlamWallet { ...props } { ...stateForSlamWallet } />
+												<SlamWallet {...props} {...stateForSlamWallet} />
 											</Foco>
 											:
 											<></>
@@ -462,8 +465,35 @@ function Header(props) {
 								</>
 								:
 								<>
-									<div className="connectWallet">{address.substr(0, 6) + '...' + address.substr(-4)}</div>
-									<div className="disconnectWallet" onClick={disconnectWallet}>Disconnect Wallet</div>
+									<div className="connectWallet" onMouseEnter={() => {if(!isMobile)setShowProfileHover(true)}} onMouseLeave={() => {if(!isMobile)setShowProfileHover(false)}} onClick={()=>{
+										if(isMobile) {
+											setShowProfileHover(!showProfileHover);
+											setShowProfileMobile(!showProfileMobile);
+										}
+									}}>{address.substr(0, 6) + '...' + address.substr(-4)}
+										{showProfileHover ? <div className={!isMobile ? "profileHoverpanel desktopVersion" : " profileMobile"}>
+											<div className="panel">
+												<a href="/"><div className="imgDiv"><img src="/image/profile.png" style={{ width: "14.36px", height: "20.85px" }} /></div>My Profile</a>
+												<a href="/"><div className="imgDiv"><img src="/image/transaction.svg" style={{ width: "24px", height: "24px" }} /></div>Transactions</a>
+												<a href="/ReservedBubbleX"><div className="imgDiv"><img src="/image/strongbox.svg" style={{ width: "24px", height: "24px" }} /></div>Reserved</a>
+												<a href="/" onClick={disconnectWallet}><div className="imgDiv"><img src="/image/logout.svg" style={{ width: "24px", height: "24px" }} /></div>Disconnect</a>
+
+											</div>
+										</div> : <></>}
+									</div>
+
+									<div className={"connectSlamWalletContent" + (showProfileMobile ? " profileMobile" : "")}>
+										<div className="connectSlamWallet" onClick={() => setOpenModal(true)}>{loginSlamFlg == 0 ? "Connect SlamWallet" : "SlamWallet Connected"}</div>
+										{isOpen ?
+											<Foco
+												onClickOutside={() => { setOpenModal(false); props.removeReserveClicked(); }}
+											>
+												<SlamWallet {...props} {...stateForSlamWallet} />
+											</Foco>
+											:
+											<></>
+										}
+									</div>
 								</>
 						}
 					</div>

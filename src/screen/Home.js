@@ -322,7 +322,7 @@ export default function Home() {
 						<div className="top_content">
 							<div className="content_title">Collect and earn on <font color="#216AF5">NFT<img src="/image/top_img1.png" /></font> bubbles</div>
 
-							<div className="content_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis no.</div>
+							<div className="content_text">Make money in the BubbleX Metaverse by collecting and combining your Bubbles to create one high quality Bubble with higher rewards. Raise the statistics and price of your BubbleX character by collecting different accessories and clothes to make it more fashionable.</div>
 							<div className="content_btnGroup">
 								<a className="purchaseBtn" href="/#reserveGroup">Purchase</a>
 								<div className="learnMore">Learn More</div>
@@ -344,7 +344,7 @@ export default function Home() {
 						<img src="/image/brush.svg" alt="" />
 					</div>
 					<div className="title">Art & Technology</div>
-					<div className="content">DNA of each bubble consists of 12000  attributes. The result is billions of unique characters</div>
+					<div className="content">BubbleX Metaverse is based on 10,000 limited collections of one-of-a-kind NFT bubble characters that are classified as Common, Epic, or Legendary. The bubbles contain whole worlds and random stuff that depend on the user’s choice. </div>
 				</div>
 
 				<div className="content1_item">
@@ -360,7 +360,7 @@ export default function Home() {
 						<img src="/image/vs_img.png" alt="" />
 					</div>
 					<div className="title">First NFT battles</div>
-					<div className="content">Battle on Arena and win Ethereum or NFT dragon</div>
+					<div className="content">We have introduced a gene modification attribute on the BubbleX characters that will allow members to chat and mate with a character by purchasing premium likes on the platform. These characters will be worth more than others on the platform. Mating with the genetically modified characters will produce babies that are worth more. </div>
 				</div>
 			</div>
 
@@ -368,13 +368,13 @@ export default function Home() {
 				<div className="video_img">
 					<img src="/image/bubble_video.png" alt="" style={{ opacity: (showVideo ? 0 : 1) }} />
 					{showVideo ? <video autoPlay controls onEnded={() => setShowVideo(false)}>
-						<source src="/image/mov_bbb.mp4" type="video/mp4"></source>
+						<source src="/image/1.mp4" type="video/mp4"></source>
 					</video> : <></>}
 					{!showVideo ? <img src="/image/videoPlay.png" alt="" onClick={() => setShowVideo(true)} /> : <></>}
 				</div>
 				<div className="content">
 					<div className="title">Our advertise was shown on Times Square</div>
-					<div className="text">Recently we rented banners on Times Square and showed our product to thousands of people. So, hurry up! There’re plenty of wishing customers to buy Bubbles.<br /><br />Become one of the luckiest!</div>
+					<div className="text">Recently we rented banners in Times Square and showed our product to thousands of people. So, hurry up! There’re plenty of customers willing to buy Bubbles.<br /><br />Become one of the luckiest!</div>
 				</div>
 				<img src="/image/img2.png" alt="" />
 			</div>
@@ -402,7 +402,7 @@ export default function Home() {
 				</div>
 				<div className="content">
 					<div className="title">Our advertise was shown on Times Square</div>
-					<div className="text">Recently we rented banners on Times Square and showed our product to thousands of people. So, hurry up! There’re plenty of wishing customers to buy Bubbles.<br /><br />Become one of the luckiest!</div>
+					{/* <div className="text">Recently we rented banners in Times Square and showed our product to thousands of people. So, hurry up! There’re plenty of wishing customers to buy Bubbles.<br /><br />Become one of the luckiest!</div> */}
 				</div>
 				<img src="/image/img2.png" alt="" />
 			</div>
@@ -877,12 +877,12 @@ export default function Home() {
 				<div className="content1 content">
 					<img src="/image/img14.png" alt="" />
 					<div className="title">Bubble<br /> Language<br /> Kassis</div>
-					<div className="text">Become the owner of a limited collection of Bubbles from which Characters hatch.</div>
+					<div className="text">Networking and socializing are a bigger part of BubbleX, NFT holders can socialize, attend parties, listen to music, and engage with like-minded character owners. Members will be able to make money while socializing and networking with other character owners. </div>
 				</div>
 				<div className="content2 content">
 					<img src="/image/img15.png" alt="" />
 					<div className="title">Battle on <br />blockchain</div>
-					<div className="text">Become the owner of a limited collection of Bubbles from which Characters hatch.</div>
+					<div className="text">Members will be able to match their characters (with own characters) or with other people’s characters and produce babies depending on the rarity of the matched characters.</div>
 				</div>
 				<div className="content3 content">
 					<div className="textGroup">
@@ -895,7 +895,7 @@ export default function Home() {
 
 			<div className="slamTeam">
 				<div className="title">Slam Team</div>
-				<div className="description">We are a team of bubble lovers with 75+ members. Together we developed out SlamCharacter Metaverse, where advanced art and high-end technology meet each other.</div>
+				<div className="description">We are a team of bubble lovers with 75+ members. Together we developed our SlamCharacter Metaverse, where advanced art and high-end technology meet. </div>
 				<div className="adminGroup">
 					<div className="adminItem">
 						<div className="avatarBG">
@@ -1415,16 +1415,6 @@ export default function Home() {
 									<div></div>
 								</div>
 								<div className="text collapse" id="faq44">All transactions take place on the blockchain and as such, you are assured of getting your ETH upon waiting. If the issue is not resolved, write to our support team at slam_support@mail.com. </div>
-							</div>
-						</div>
-
-						<div className="faqItem">
-							<div className="content">
-								<div className="titleBar collapsed" data-toggle="collapse" href="#faq45" role="button" area-expanded="true" area-controls="faq45">
-									<div className="title">I sold a character, where is my ETH?</div>
-									<div></div>
-								</div>
-								<div className="text collapse" id="faq45">All transactions take place on the blockchain and as such, you are assured of getting your ETH upon waiting. If the issue is not resolved, write to our support team at slam_support@mail.com. </div>
 							</div>
 						</div>
 

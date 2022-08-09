@@ -133,6 +133,55 @@ body {
     top: 20px;
 }
 
+.header .header_buttonGroup .profileHoverpanel {
+    min-width: 197px;
+    width: 197px;
+
+    position: absolute;
+    top: 40px;
+    z-index: 2;
+}
+
+.HomeScreen .header .header_buttonGroup .profileHoverpanel .panel {
+    border: none;
+}
+
+.header .header_buttonGroup .profileHoverpanel .panel {
+    display: flex;
+    flex-direction: column;
+    padding-left: 15px;
+    background-color: white;
+    border-radius: 12px;
+    margin-top: 20px;
+    /* height: 180px; */
+    padding-bottom: 15px;
+    box-shadow: 0px 10px 60px rgba(124, 116, 116, 0.2);
+    border: 2px solid rgba(124, 116, 116, 0.2);
+}
+
+.header .header_buttonGroup .profileHoverpanel .panel a {
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 21px;
+    color: #1B1B1B;
+    display: flex;
+    align-items: center;
+}
+
+.header .header_buttonGroup .profileHoverpanel .panel a .imgDiv {
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.header .header_buttonGroup .profileHoverpanel .panel a:last-child {
+    padding-top: 15px;
+    border-top: 1px solid #ECECEC;
+}
+
 .header .header_menu .menuGroup .homeHoverPanel .panel {
     position: relative;
 
@@ -227,6 +276,38 @@ body {
 .HomeScreen .header .header_buttonGroup .connectWallet {
     background: #FFFFFF;
     color: #1B1B1B;
+    position: relative;
+    ;
+}
+
+.HomeScreen .header .header_buttonGroup .connectWallet .profileMobile {
+    position: absolute;
+    top: 60px;
+    width: 100%;
+    border: 1px solid #E1E4EB;
+    padding-left: 15px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+    border-radius: 12px;
+}
+
+.HomeScreen .header .header_buttonGroup .connectWallet .profileMobile a {
+    display: flex;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 21px;
+    color: #1B1B1B;
+    margin-top: 15px;
+}
+
+.HomeScreen .header .header_buttonGroup .connectWallet .profileMobile a:last-child {
+    padding-top: 15px;
+    border-top: 1px solid #E1E4EB;
+    ;
+}
+
+.HomeScreen .header .header_buttonGroup .connectWallet .profileMobile a div {
+    margin-right: 15px;
 }
 
 .header .header_buttonGroup .connectWallet {
@@ -237,6 +318,7 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
 }
 
 .header .header_buttonGroup .disconnectWallet {
@@ -254,6 +336,10 @@ body {
 
 .header .header_buttonGroup .connectSlamWalletContent {
     position: relative;
+}
+
+.header .header_buttonGroup .connectSlamWalletContent.profileMobile {
+    margin-top: 200px;
 }
 
 .header .header_buttonGroup .connectSlamWalletContent .LoginModal .loadingIcon {
@@ -282,8 +368,7 @@ body {
     top: 60px;
 }
 
-.header .LoginModal:first-child {
-}
+.header .LoginModal:first-child {}
 
 .header .LoginModal>div {
     display: flex;
@@ -3120,6 +3205,8 @@ body {
         margin-left: 0px;
         margin-top: 15px;
     }
+
+
 
     .header .header_group .disabled {
         display: none;
@@ -6045,13 +6132,252 @@ body {
 }
 
 .ReservedBubbleX .mainContent .title {
-    margin-top: 80px;
+    margin-top: 70px;
     font-style: normal;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 36px;
     line-height: 43px;
     color: #1B1B1B;
 }
+
+.ReservedBubbleX .mainContent .aboutUser {
+    margin-top: 50px;
+    display: flex;
+}
+
+.ReservedBubbleX .mainContent .aboutUser img {
+    width: 103px;
+    height: 103px;
+}
+
+.ReservedBubbleX .mainContent .aboutUser .userGroup {
+    margin-left: 20px;
+}
+
+
+.ReservedBubbleX .mainContent .aboutUser .userGroup .user {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 43px;
+
+    margin-bottom: 20px;
+}
+
+.ReservedBubbleX .mainContent .aboutUser .userGroup button {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 19px;
+    /* identical to box height */
+
+    text-align: center;
+
+    color: #FFFFFF;
+
+    background: linear-gradient(97.35deg, #FA5FFA -0.76%, #E539E5 107.58%);
+    box-shadow: 0px 4px 20px rgba(233, 64, 233, 0.35);
+    border-radius: 10px;
+
+    border: none;
+}
+
+.ReservedBubbleX .mainContent .aboutUser .userGroup .copy-address {
+    width: 161px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.ReservedBubbleX .mainContent .aboutUser .userGroup .copy-address img {
+    width: 18px;
+    height: 18px;
+    margin-left: 8px;
+}
+
+.ReservedBubbleX .mainContent .aboutUser .userGroup .share {
+    width: 102px;
+    height: 40px;
+}
+
+.ReservedBubbleX .mainContent .aboutUser .userGroup .share img {
+    width: 20px;
+    height: 16px;
+    margin-left: 8px;
+}
+
+.ReservedBubbleX .mainContent .subContent {
+    margin-top: 30px;
+    display: flex;
+
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.ReservedBubbleX .mainContent .Reserved_bubbles {
+    margin-top: 22px;
+    display: flex;
+}
+
+.ReservedBubbleX .mainContent .Reserved_bubbles .characterItem0 {
+    width: 165px;
+    height: 187px;
+    left: 230px;
+    top: 397px;
+
+    border: 3px dashed #F658F6;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+
+    margin: 8px;
+}
+
+.ReservedBubbleX .mainContent .Reserved_bubbles .characterItem0 .text {
+    margin-top: 15px;
+
+    font-style: normal;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 19px;
+    /* identical to box height */
+
+    text-align: center;
+
+    color: #1B1B1B;
+}
+
+
+.ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1 {
+    width: 165px;
+    height: 187px;
+
+    margin: 8px;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex {
+    padding: 30px;
+    width: 473px;
+    height: 428px;
+    left: 1217px;
+    top: 358px;
+
+    background: #F8F8F8;
+    box-shadow: 0px 20.4075px 56.6874px rgba(0, 0, 0, 0.06);
+    border-radius: 20.361px;
+
+    margin-top: -30px;
+    margin-right: 30px;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .subtitle {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+    color: #1B1B1B;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .mint_contents,
+.ReservedBubbleX .mainContent .mint-bubblex .mint_prediction {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #5E5E5E;
+
+    margin-top: 20px;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .mint_count {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: #1B1B1B;
+
+    margin-top: 30px;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .input_count {
+    margin-top: 10px;
+    display: flex;
+    border-radius: 10px;
+    width: 215px;
+    height: 66px;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .input_count input {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background: #EDEDED;
+    outline: none;
+    border: none;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 39px;
+    color: #1B1B1B;
+    padding-left: 20px;
+    width: 100%;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .input_count input::-webkit-outer-spin-button,
+.ReservedBubbleX .mainContent .mint-bubblex .input_count input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .input_count .numberControls div {
+    width: 52px;
+    height: 33px;
+    background: #E2E4E7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .input_count .numberControls .up-arrow {
+    border-top-right-radius: 10px;
+    
+    border-bottom: 1px solid #EDEDED;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .input_count .numberControls .down-arrow {
+    border-bottom-right-radius: 10px;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex button {
+    margin-top: 30px;
+
+    width: 413px;
+    height: 75px;
+    left: 1247px;
+    top: 639px;
+
+    background: linear-gradient(97.35deg, #FA5FFA -0.76%, #E539E5 107.58%);
+    box-shadow: 0px 4px 20px rgba(233, 64, 233, 0.35);
+    border-radius: 15px;
+
+    font-style: normal;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: center;
+
+    color: #FFFFFF;
+
+    border: none;
+}
+
+.ReservedBubbleX .mainContent .mint-bubblex .mint_prediction {
+    text-align: center;
+}
+
+
 
 
 
@@ -6120,6 +6446,7 @@ body {
     .ReservedBubbleX .mainContent .NFTList {
         width: 100%;
     }
+
 
 
 
