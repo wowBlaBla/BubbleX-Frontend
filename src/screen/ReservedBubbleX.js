@@ -177,10 +177,10 @@ export default function ReservedBubbleX() {
 				<div className="title">Reserved bubbles</div>
 				<div className="subContent">
 					<div className="Reserved_bubbles">
-						<div className="characterItem0">
+						<a href="/#reserveGroup" className="characterItem0">
 							<img src="/image/plus.png" />
 							<div className="text">Reserve Bubbles</div>
-						</div>
+						</a>
 
 						<div className="characterItem1">
 							<img src="/image/random_character.png" />

@@ -473,8 +473,8 @@ function Header(props) {
 									}}>{address.substr(0, 6) + '...' + address.substr(-4)}
 										{showProfileHover ? <div className={!isMobile ? "profileHoverpanel desktopVersion" : " profileMobile"}>
 											<div className="panel">
-												<a href="/"><div className="imgDiv"><img src="/image/profile.png" style={{ width: "14.36px", height: "20.85px" }} /></div>My Profile</a>
-												<a href="/"><div className="imgDiv"><img src="/image/transaction.svg" style={{ width: "24px", height: "24px" }} /></div>Transactions</a>
+												{/* <a href="/"><div className="imgDiv"><img src="/image/profile.png" style={{ width: "14.36px", height: "20.85px" }} /></div>My Profile</a> */}
+												<a href="/Transactions"><div className="imgDiv"><img src="/image/transaction.svg" style={{ width: "24px", height: "24px" }} /></div>Transactions</a>
 												<a href="/ReservedBubbleX"><div className="imgDiv"><img src="/image/strongbox.svg" style={{ width: "24px", height: "24px" }} /></div>Reserved</a>
 												<a href="/" onClick={disconnectWallet}><div className="imgDiv"><img src="/image/logout.svg" style={{ width: "24px", height: "24px" }} /></div>Disconnect</a>
 

@@ -38,7 +38,7 @@ body {
     padding-top: 25px;
     padding-bottom: 25px;
     align-items: center;
-    padding-left: 20px;
+    padding-left: 100px;
     padding-right: 20px;
 }
 
@@ -2989,7 +2989,7 @@ body {
     .header {
         padding-top: 0px;
         position: relative;
-        /* padding-left: 20px; */
+        padding-left: 20px;
         height: 80px;
         padding-bottom: 40px;
     }
@@ -6216,6 +6216,7 @@ body {
 .ReservedBubbleX .mainContent .Reserved_bubbles {
     margin-top: 22px;
     display: flex;
+    flex-wrap: wrap;
 }
 
 .ReservedBubbleX .mainContent .Reserved_bubbles .characterItem0 {
@@ -6342,7 +6343,7 @@ body {
 
 .ReservedBubbleX .mainContent .mint-bubblex .input_count .numberControls .up-arrow {
     border-top-right-radius: 10px;
-    
+
     border-bottom: 1px solid #EDEDED;
 }
 
@@ -6379,7 +6380,7 @@ body {
 
 
 
-
+/************************************/
 
 .ReservedBubbleX .mainContent .subtitle {
     margin-top: 20px;
@@ -6419,8 +6420,116 @@ body {
     word-break: break-all;
     margin-right: 25px;
 }
+/***********/
+
 
 @media (max-width: 640px) {
+
+    .ReservedBubbleX .mainContent .aboutUser {
+        margin-top: 30px;
+    }
+    
+    .ReservedBubbleX .mainContent .aboutUser img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .ReservedBubbleX .mainContent .aboutUser .userGroup {
+        margin-left: 10px;
+    }
+    
+    
+    .ReservedBubbleX .mainContent .aboutUser .userGroup .user {
+        font-size: 26px;
+        line-height: 26px;    
+        margin-bottom: 8px;
+    }
+    
+    .ReservedBubbleX .mainContent .aboutUser .userGroup button {
+        font-size: 12px;
+        line-height: 19px;
+    }
+    
+    .ReservedBubbleX .mainContent .aboutUser .userGroup .copy-address {
+        width: 120px;
+        height: 26px;
+        margin-right: 4px;
+    }
+    
+    .ReservedBubbleX .mainContent .aboutUser .userGroup .copy-address img {
+        width: 10px;
+        height: 10px;
+        margin-left: 8px;
+    }
+    
+    .ReservedBubbleX .mainContent .aboutUser .userGroup .share {
+        width: 70px;
+        height: 26px;
+    }
+    
+    .ReservedBubbleX .mainContent .aboutUser .userGroup .share img {
+        width: 12px;
+        height: 16px;
+        margin-left: 8px;
+    }
+    
+    .ReservedBubbleX .mainContent .subContent {
+        margin-top: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .ReservedBubbleX .mainContent .Reserved_bubbles {
+        margin-top: 10px;
+
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .ReservedBubbleX .mainContent .Reserved_bubbles .characterItem0 {
+        /* width: 100%;
+        height: 145px; */
+    }
+    
+    .ReservedBubbleX .mainContent .Reserved_bubbles .characterItem0 .text {
+        margin-top: 10px;
+    
+        font-weight: 800;
+        font-size: 14px;
+        
+    }
+    
+    
+    .ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1 {
+        /* width: 100%;
+        height: 145px; */
+    
+        margin: 4px;
+    }
+    .ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1 img {
+        /* width: 100%;
+        height: 145px; */
+    }
+
+    
+    .ReservedBubbleX .mainContent .mint-bubblex {
+        padding: 30px;
+        width: 100%;
+        height: 428px;
+    
+        margin-top: 30px;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+    
+    .ReservedBubbleX .mainContent .mint-bubblex button {    
+        width: 100%;
+        height: 55px;
+    }
+    
+
+
 
     .ReservedBubbleX .mainContent .title {
         margin-top: 30px;
@@ -6429,7 +6538,7 @@ body {
         font-size: 24px;
         line-height: 29px;
         color: #000000;
-        text-align: center;
+        /* text-align: center; */
     }
 
     .ReservedBubbleX .mainContent .react-tabs__tab-panel {
@@ -6448,13 +6557,140 @@ body {
     }
 
 
-
-
     /* .ReservedBubbleX .react-tabs__tab-panel {
         padding-right: 15px;
         padding-left: 15px;
     } */
 }
+
+/*Transaction Screen*/
+
+.Transactions .mainContent {
+    max-width: 1500px;
+    margin: auto;
+    /* width: 100%; */
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 180px;
+    max-width: 1100px;
+
+}
+
+.Transactions .mainContent .title {
+    margin-top: 70px;
+    margin-bottom: 40px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 43px;
+    color: #1B1B1B;
+}
+
+.Transactions .mainContent .TransactionItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.Transactions .mainContent .TransactionItem .avatar {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    width: 40%;
+}
+
+.Transactions .mainContent .TransactionItem .avatar .img {
+    position: relative;
+    margin-right: 32px;
+}
+
+.Transactions .mainContent .TransactionItem .avatar .img img:first-child {
+    width: 65px;
+    height: 65px;
+}
+
+.Transactions .mainContent .TransactionItem .avatar .img img:last-child {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+.Transactions .mainContent .TransactionItem .tTitle {
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 24px;
+    color: #1B1B1B;
+}
+
+.Transactions .mainContent .TransactionItem .address,
+.Transactions .mainContent .TransactionItem .tDate {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    color: #5E5E5E;
+}
+
+.Transactions .mainContent .TransactionItem .tVal {
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 24px;
+    /* identical to box height */
+
+    text-align: right;
+
+    color: #1B1B1B;
+    width: 15%;
+}
+
+
+
+@media (max-width: 640px) {
+
+    .Transactions .mainContent .title {
+        margin-top: 30px;
+        margin-bottom: 25px;        
+        font-style: normal;
+        font-weight: 700;
+        font-size: 26px;
+        line-height: 29px;
+        color: #000000;
+    }
+
+    .Transactions .mainContent .TransactionTable 
+    {
+        overflow-x: auto;
+    }
+
+    .Transactions .mainContent .TransactionItem
+    {
+        min-width: 800px;
+        margin-bottom: 20px;
+    }
+
+    .Transactions .mainContent .TransactionItem .avatar .img img:first-child {
+        width: 45px;
+        height: 45px;
+    }
+
+    .Transactions .mainContent .TransactionItem .avatar .img img:last-child {
+        width: 15px;
+        height: 15px;
+    }
+
+    .Transactions .mainContent .TransactionItem .tTitle, .Transactions .mainContent .TransactionItem .tVal {
+        font-size: 16px;
+    }
+
+    .Transactions .mainContent .TransactionItem .address,
+    .Transactions .mainContent .TransactionItem .tDate {
+        font-size: 14px;
+    }
+}
+
+
+
 
 
 

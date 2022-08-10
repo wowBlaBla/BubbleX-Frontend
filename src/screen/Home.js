@@ -325,7 +325,7 @@ export default function Home() {
 							<div className="content_text">Make money in the BubbleX Metaverse by collecting and combining your Bubbles to create one high quality Bubble with higher rewards. Raise the statistics and price of your BubbleX character by collecting different accessories and clothes to make it more fashionable.</div>
 							<div className="content_btnGroup">
 								<a className="purchaseBtn" href="/#reserveGroup">Purchase</a>
-								<div className="learnMore">Learn More</div>
+								<a className="learnMore" href="/pdf/SLAMCOIN WHITEPAPER .pdf" target="_blank">Learn More</a>
 								<img src="/image/top_img2.png" />
 							</div>
 						</div>
@@ -432,7 +432,7 @@ export default function Home() {
 							<img src="/image/line2.png" alt="" className="line2" />
 						</div>
 						<div className="title">Hatch your Character on December 27th</div>
-						<div className="text">SlamCharacters starts with 10k limited collection of one-of-a-kind NFT bubbles.</div>
+						<div className="text">Upon hatching your bubble, you get a character who's class is determined by the rarity of your mated characters.</div>
 					</div>
 					<div className="bubbleContent">
 						<div className="bubbleImg">
