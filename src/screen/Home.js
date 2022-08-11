@@ -420,7 +420,7 @@ export default function Home() {
 							<img src="/image/line1.png" className="line1" alt="" />
 						</div>
 						<div className="title">Get a Bubble today</div>
-						<div className="text">SlamCharacters starts with 10k limited collection of one-of-a-kind NFT bubbles.</div>
+						<div className="text">Slamcharacters start with 10k limited collection of one-of-a-kind NFT Bubbles.</div>
 					</div>
 					<div className="bubbleContent">
 						<div className="bubbleImg">
@@ -460,7 +460,7 @@ export default function Home() {
 						<img src="/image/circle4.png" alt="" />
 					</div>
 					<div className="title">Meet the BubbleCharacters Metavers</div>
-					<div className="text">SlamCharacters starts with 10k limited collection of one-of-a-kind NFT bubbles.</div>
+					<div className="text">In the BubbleX Metaverse, characters will have specific genes and their combinations. The number of genes per character influence their class</div>
 				</div>
 			</div>
 
