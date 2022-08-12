@@ -2,11 +2,7 @@ import { React, useEffect, useState } from 'react';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
-
-
 export default function Transactions() {
-
-
 
 	return (
 		<div className="Transactions">

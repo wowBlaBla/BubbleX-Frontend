@@ -52,8 +52,6 @@ export default function Home() {
 		await axios.get(`${process.env.REACT_APP_SLAMBACKEND}api/settings`).then(res => {
 			const { setting } = res.data;
 
-			console.log(setting);
-
 			setAdminWallet(setting.admin_wallet);
 
 			let price = [
@@ -80,6 +78,18 @@ export default function Home() {
 		});
 	}, []);
 
+	useEffect(async () => {
+		console.log(wallet.address);
+		if (!wallet.address) return;
+
+		/*
+		await axios.get(`${process.env.REACT_APP_SLAMBACKEND}api/getReservedCount/${wallet.address}`).then(res => {
+			console.log(res);
+		}).catch(err => {
+		});
+		*/
+	}, [wallet.address])
+
 	const onSetShowVideoPlayModal = () => {
 		setShowVideoPlayModal(!showVideoPlayModal);
 	}
@@ -91,9 +101,6 @@ export default function Home() {
 			setSliderBackground({ background: "linear-gradient(to right, #FF79FF 0%, #EEEEEE 0%)" });
 		else
 			setSliderBackground({ background: "linear-gradient(to right, #FF79FF " + (parseFloat(event.target.value) - parseFloat(event.target.min)) / (parseFloat(event.target.max) - parseFloat(event.target.min)) * 100 + "%, #EEEEEE " + (parseFloat(event.target.value) - parseFloat(event.target.min)) / (parseFloat(event.target.max) - parseFloat(event.target.min)) * 100 + "%)" })
-	}
-
-	const buyWithSlam = () => {
 	}
 
 	const onSetRandomReverse = async (iCount) => {
