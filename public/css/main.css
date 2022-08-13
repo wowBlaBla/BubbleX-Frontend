@@ -1771,6 +1771,16 @@ body {
     align-items: flex-end;
 }
 
+.HomeScreen .content6 .reserveGroup .reserveItem .itemPanel>.value .ethOrSlam {
+    font-style: normal;
+    font-weight: 900;
+    font-size: 48px;
+    line-height: 57px;
+    text-align: center;
+    color: #1B1B1B;
+    margin: 0 6px;
+}
+
 .HomeScreen .content6 .reserveGroup .reserveItem .itemPanel>.value .ethValue {
     font-style: normal;
     font-weight: 900;
@@ -1787,7 +1797,8 @@ body {
     line-height: 22px;
     color: #1B1B1B;
     margin-bottom: 7px;
-    margin-left: 8px;
+    /*margin-left: 8px;*/
+    margin-right: 5px;
 }
 
 .HomeScreen .content6 .reserveGroup .reserveItem .itemPanel .textGroup {
