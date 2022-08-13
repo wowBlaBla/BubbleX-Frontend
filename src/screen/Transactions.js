@@ -85,10 +85,10 @@ export default function Transactions() {
 														<img src={`/image/${item.bnb}.png`}/>
 													</div>
 												</div>
-												<div className='address'>to: {shorten(item.from)}</div>
+												<div className='address'>to: {shorten(item.to)}</div>
 												<div className='tDate'>{ moment(item.created_at).format('LLL')}</div>
 
-												<div className='tVal'>{(item.isNFT) / 0x10} NFT </div>
+												<div className='tVal'>{Number(item.isNFT) >> 4} NFT </div>
 												<div className='tType'>{getType(item.isNFT)}</div>
 											</div>
 										)

@@ -161,14 +161,13 @@ export default function Home() {
 					web3.eth.getTransactionReceipt(result.hash, function(err, rec) {
 						if (rec) {
 							clearInterval(interval);
-
 							axios.post(process.env.REACT_APP_SLAMBACKEND + 'api/cryptoTx', {
 								user_id: -1,
 								amount: ethers.utils.formatEther(amount.toString()),
 								transactionHash: result.hash,
 								from: result.from,
 								to: result.to,
-								isNFT: '0x' + itemCount + mintType,
+								isNFT: '0x' + iCount + mintType,
 								nativeCoin: Number(wallet.chainId) == Number(ethChainID) ? 'ETH' : 'BNB',
 								txMethod: 2
 							}).then(res => {
