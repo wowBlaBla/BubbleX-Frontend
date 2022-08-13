@@ -6591,13 +6591,17 @@ body {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 30px;
+    box-shadow: 0 0 3px #bbb;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
 .Transactions .mainContent .TransactionItem .avatar {
     display: flex;
     align-items: center;
     /* justify-content: center; */
-    width: 40%;
+    /* width: 40%; */
 }
 
 .Transactions .mainContent .TransactionItem .avatar .img {
@@ -6611,9 +6615,9 @@ body {
 }
 
 .Transactions .mainContent .TransactionItem .avatar .img img:last-child {
-    position: absolute;
+    /* position: absolute;
     bottom: 0px;
-    right: 0px;
+    right: 0px; */
 }
 
 .Transactions .mainContent .TransactionItem .tTitle {
@@ -6644,7 +6648,16 @@ body {
     width: 15%;
 }
 
+.Transactions .mainContent .TransactionItem .tType {
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 24px;
+    /* identical to box height */
+    text-transform: capitalize;
+    text-align: right;
 
+    color: #1B1B1B;
+}
 
 @media (max-width: 640px) {
 
