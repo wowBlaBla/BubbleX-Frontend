@@ -6266,10 +6266,45 @@ body {
 .ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1 {
     width: 165px;
     height: 187px;
-
     margin: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
 }
 
+.ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1.random {
+    box-shadow: 0 0 3px hotpink;
+}
+
+.ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1.epic {
+    box-shadow: 0 0 3px #216AF5;
+}
+
+.ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1.legendary {
+    box-shadow: 0 0 3px #FFD53F;
+}
+
+.ReservedBubbleX .mainContent .Reserved_bubbles .characterItem1 .reserve-badge {
+    padding: 2px 8px;
+    border-radius: 25px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    text-transform: uppercase;
+}
+.reserve-badge.badge-random {
+    background: linear-gradient(97.35deg, #FA5FFA -0.76%, #E539E5 107.58%);
+}
+
+.reserve-badge.badge-epic {
+    background: linear-gradient(142.19deg, #7AA8FF 4.05%, #216AF5 100.93%), linear-gradient(95.8deg, #FA5FFA 9.04%, #E539E5 96.46%), #C4C4C4;
+}
+
+.reserve-badge.badge-legendary {
+    background: linear-gradient(95.8deg, #FFD53F 9.04%, #E2B71C 96.46%), linear-gradient(142.19deg, #7AA8FF 4.05%, #216AF5 100.93%), linear-gradient(95.8deg, #FA5FFA 9.04%, #E539E5 96.46%), #C4C4C4;
+}
 .ReservedBubbleX .mainContent .mint-bubblex {
     padding: 30px;
     width: 473px;

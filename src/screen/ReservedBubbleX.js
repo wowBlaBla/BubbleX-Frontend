@@ -8,6 +8,14 @@ import BubblexABI from '../contract/BubbleXPresale.json';
 import Web3 from "web3";
 import axios from 'axios';
 
+const characters = [
+	'random', 'epic', 'legendary'
+];
+
+const badges = [
+	'badge-random', 'badge-epic', 'badge-legendary'
+];
+
 export default function ReservedBubbleX() {
 
 	const userAddress = useSelector(store => store.wallet.address);
@@ -18,11 +26,20 @@ export default function ReservedBubbleX() {
 	const [selectedNFTURL, setSelectNFTURL] = useState("");
 
 	const [bubbleCountValue, setBubbleCountValue] = useState(1);
+	const [reserveList, setReserveList] = useState([]);
+	const [isLoading, setLoading] = useState(true);
 
 	const ReversedBubbleX = async () => {
-		ReversedRandomBubbleX();
-		ReversedEpicBubbleX();
-		ReversedLegendaryBubbleX();
+		await axios.post(`${process.env.REACT_APP_SLAMBACKEND}api/transaction-crypto-wallet`, {from: userAddress}).then(({ data }) => {
+			let transactions = data.transactions.sort((a, b) => a.isNFT % 0x10 - b.isNFT % 0x10);
+			setReserveList(transactions);
+		}).catch(err => {
+
+		});
+		setLoading(false);
+		// ReversedRandomBubbleX();
+		// ReversedEpicBubbleX();
+		// ReversedLegendaryBubbleX();
 	}
 
 
@@ -154,8 +171,9 @@ export default function ReservedBubbleX() {
 	}
 
 	useEffect(() => {
+		if (!userAddress) return;
 		ReversedBubbleX();
-	}, []);
+	}, [userAddress]);
 
 
 	return (
@@ -178,17 +196,14 @@ export default function ReservedBubbleX() {
 				<div className="subContent">
 					<div className="Reserved_bubbles">
 						<a href="/#reserveGroup" className="characterItem0">
-							<img src="/image/plus.png" />
+							<img src="/image/plus.png" alt=""/>
 							<div className="text">Reserve Bubbles</div>
 						</a>
-
-						<div className="characterItem1">
-							<img src="/image/random_character.png" />
-						</div>
-						<div className="characterItem1">
-							<img src="/image/legendary_character.png" />
-						</div>
-						
+						{
+							reserveList.map((item, idx) => (
+								<ReserveItem key={idx} property={item.isNFT}/>
+							))
+						}
 					</div>
 
 					<div className="mint-bubblex">
@@ -202,8 +217,8 @@ export default function ReservedBubbleX() {
 								<div className='down-arrow' onClick={()=>{if(bubbleCountValue != 1)setBubbleCountValue(bubbleCountValue - 1);}}><img src="/image/down.png"/></div>
 							</div>
 						</div>
-						<button className="mint">Mint the Bubble</button>
-						<div className="mint_prediction">Mint will be avaliable in January</div>
+						<button className="mint" disabled>Mint the Bubble</button>
+						<div className="mint_prediction">Mint will be avaliable after presale</div>
 					</div>
 				</div>
 
@@ -272,5 +287,22 @@ export default function ReservedBubbleX() {
 			</div>
 			<Footer />
 		</div>
+	)
+}
+
+const ReserveItem = ({ property }) => {
+	return (
+		<>
+			{
+				[...new Array(Number(property) >> 4)].map((item, idx) => {
+					return (
+						<div className={`characterItem1 ${characters[Number(property) % 0x10]}`} key={idx}>
+							<span className={`reserve-badge ${badges[Number(property) % 0x10]}`}>{characters[Number(property) % 0x10]}</span>
+							<img src={`/image/${characters[Number(property) % 0x10]}.png`} alt="" className="w-100 mt-2"/>
+						</div>
+					)
+				})
+			}
+		</>
 	)
 }
